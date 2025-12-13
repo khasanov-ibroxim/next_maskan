@@ -37,11 +37,7 @@ __turbopack_context__.s([
     "getProperties",
     ()=>getProperties,
     "getPropertyById",
-    ()=>getPropertyById,
-    "getPropertyImages",
-    ()=>getPropertyImages,
-    "getStats",
-    ()=>getStats
+    ()=>getPropertyById
 ]);
 const API_BASE_URL = ("TURBOPACK compile-time value", "http://194.163.140.30:5000") || 'http://194.163.140.30:5000';
 // ✅ Cache for reducing duplicate requests
@@ -151,63 +147,6 @@ async function getLocations() {
         return result.data;
     } catch (error) {
         console.error('❌ Error fetching locations:', error);
-        return [];
-    }
-}
-async function getStats() {
-    try {
-        const url = `${API_BASE_URL}/api/public/stats`;
-        const result = await cachedFetch(url, {
-            next: {
-                revalidate: 300
-            }
-        }, 300 * 1000 // 5 minutes cache
-        );
-        if (!result.success || !result.data) {
-            return {
-                totalProperties: 0,
-                availableRooms: [
-                    '1',
-                    '2',
-                    '3',
-                    '4+'
-                ]
-            };
-        }
-        return result.data;
-    } catch (error) {
-        console.error('❌ Error fetching stats:', error);
-        return {
-            totalProperties: 0,
-            availableRooms: [
-                '1',
-                '2',
-                '3',
-                '4+'
-            ]
-        };
-    }
-}
-async function getPropertyImages(folderUrl) {
-    try {
-        const html = await cachedFetch(folderUrl, {
-            next: {
-                revalidate: 600
-            }
-        }, 600 * 1000);
-        if (typeof html !== 'string') {
-            throw new Error('Invalid response format');
-        }
-        // Extract image URLs from HTML
-        const imgRegex = /src="(\/browse\/[^"]+\.(jpg|jpeg|png|webp))"/gi;
-        const matches = [
-            ...html.matchAll(imgRegex)
-        ];
-        const imageUrls = matches.map((match)=>`${API_BASE_URL}${match[1]}`).filter((url)=>!url.includes('thumbnail'));
-        console.log(`📷 Found ${imageUrls.length} images`);
-        return imageUrls;
-    } catch (error) {
-        console.error('❌ Error fetching images:', error);
         return [];
     }
 }
@@ -557,29 +496,9 @@ async function PropertyPage({ params }) {
     if (!property) {
         (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$client$2f$components$2f$navigation$2e$react$2d$server$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["notFound"])();
     }
-    // ✅ Fetch images with timeout
-    let images = [];
-    if (property.images > 0 && property.images[0]) {
-        try {
-            console.log('📥 Fetching images for property:', id);
-            const startTime = Date.now();
-            images = await Promise.race([
-                (0, __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$api$2e$ts__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["getPropertyImages"])(property.images[0]),
-                new Promise((_, reject)=>setTimeout(()=>reject(new Error('Timeout')), 8000))
-            ]);
-            const duration = Date.now() - startTime;
-            console.log(`✅ Images loaded in ${duration}ms: ${images.length} images`);
-        } catch (error) {
-            console.error('⚠️ Image loading failed:', error);
-            images = property.mainImage ? [
-                property.mainImage
-            ] : [];
-        }
-    }
+    const images = property.images || [];
     if (images.length === 0 && property.mainImage) {
-        images = [
-            property.mainImage
-        ];
+        images.push(property.mainImage);
     }
     const formattedDate = (0, __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$api$2e$ts__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["formatDate"])(property.createdAt, lang);
     const baseUrl = ("TURBOPACK compile-time value", "https://maskanlux.uz") || 'https://maskanlux.uz';
@@ -680,7 +599,7 @@ async function PropertyPage({ params }) {
                 }
             }, void 0, false, {
                 fileName: "[project]/app/[lang]/object/[id]/page.tsx",
-                lineNumber: 236,
+                lineNumber: 217,
                 columnNumber: 9
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])("script", {
@@ -690,7 +609,7 @@ async function PropertyPage({ params }) {
                 }
             }, void 0, false, {
                 fileName: "[project]/app/[lang]/object/[id]/page.tsx",
-                lineNumber: 240,
+                lineNumber: 221,
                 columnNumber: 9
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -709,7 +628,7 @@ async function PropertyPage({ params }) {
                                         className: "mr-1"
                                     }, void 0, false, {
                                         fileName: "[project]/app/[lang]/object/[id]/page.tsx",
-                                        lineNumber: 250,
+                                        lineNumber: 231,
                                         columnNumber: 17
                                     }, this),
                                     " ",
@@ -717,14 +636,14 @@ async function PropertyPage({ params }) {
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/app/[lang]/object/[id]/page.tsx",
-                                lineNumber: 249,
+                                lineNumber: 230,
                                 columnNumber: 15
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
                                 children: "/"
                             }, void 0, false, {
                                 fileName: "[project]/app/[lang]/object/[id]/page.tsx",
-                                lineNumber: 252,
+                                lineNumber: 233,
                                 columnNumber: 15
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$client$2f$app$2d$dir$2f$link$2e$react$2d$server$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["default"], {
@@ -733,14 +652,14 @@ async function PropertyPage({ params }) {
                                 children: property.type
                             }, void 0, false, {
                                 fileName: "[project]/app/[lang]/object/[id]/page.tsx",
-                                lineNumber: 253,
+                                lineNumber: 234,
                                 columnNumber: 15
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
                                 children: "/"
                             }, void 0, false, {
                                 fileName: "[project]/app/[lang]/object/[id]/page.tsx",
-                                lineNumber: 256,
+                                lineNumber: 237,
                                 columnNumber: 15
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$client$2f$app$2d$dir$2f$link$2e$react$2d$server$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["default"], {
@@ -749,14 +668,14 @@ async function PropertyPage({ params }) {
                                 children: property.district
                             }, void 0, false, {
                                 fileName: "[project]/app/[lang]/object/[id]/page.tsx",
-                                lineNumber: 257,
+                                lineNumber: 238,
                                 columnNumber: 15
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
                                 children: "/"
                             }, void 0, false, {
                                 fileName: "[project]/app/[lang]/object/[id]/page.tsx",
-                                lineNumber: 260,
+                                lineNumber: 241,
                                 columnNumber: 15
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -764,23 +683,23 @@ async function PropertyPage({ params }) {
                                 children: property.title
                             }, void 0, false, {
                                 fileName: "[project]/app/[lang]/object/[id]/page.tsx",
-                                lineNumber: 261,
+                                lineNumber: 242,
                                 columnNumber: 15
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/app/[lang]/object/[id]/page.tsx",
-                        lineNumber: 248,
+                        lineNumber: 229,
                         columnNumber: 13
                     }, this)
                 }, void 0, false, {
                     fileName: "[project]/app/[lang]/object/[id]/page.tsx",
-                    lineNumber: 247,
+                    lineNumber: 228,
                     columnNumber: 11
                 }, this)
             }, void 0, false, {
                 fileName: "[project]/app/[lang]/object/[id]/page.tsx",
-                lineNumber: 246,
+                lineNumber: 227,
                 columnNumber: 9
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -796,7 +715,7 @@ async function PropertyPage({ params }) {
                                     title: property.title
                                 }, void 0, false, {
                                     fileName: "[project]/app/[lang]/object/[id]/page.tsx",
-                                    lineNumber: 273,
+                                    lineNumber: 254,
                                     columnNumber: 19
                                 }, this) : /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                                     className: "bg-slate-200 rounded-2xl h-96 flex items-center justify-center",
@@ -805,12 +724,12 @@ async function PropertyPage({ params }) {
                                         children: "Rasmlar yuklanmoqda..."
                                     }, void 0, false, {
                                         fileName: "[project]/app/[lang]/object/[id]/page.tsx",
-                                        lineNumber: 276,
+                                        lineNumber: 257,
                                         columnNumber: 21
                                     }, this)
                                 }, void 0, false, {
                                     fileName: "[project]/app/[lang]/object/[id]/page.tsx",
-                                    lineNumber: 275,
+                                    lineNumber: 256,
                                     columnNumber: 19
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -821,7 +740,7 @@ async function PropertyPage({ params }) {
                                             children: property.title
                                         }, void 0, false, {
                                             fileName: "[project]/app/[lang]/object/[id]/page.tsx",
-                                            lineNumber: 282,
+                                            lineNumber: 263,
                                             columnNumber: 17
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -832,7 +751,7 @@ async function PropertyPage({ params }) {
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/app/[lang]/object/[id]/page.tsx",
-                                            lineNumber: 283,
+                                            lineNumber: 264,
                                             columnNumber: 17
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -845,7 +764,7 @@ async function PropertyPage({ params }) {
                                                             size: 18
                                                         }, void 0, false, {
                                                             fileName: "[project]/app/[lang]/object/[id]/page.tsx",
-                                                            lineNumber: 288,
+                                                            lineNumber: 269,
                                                             columnNumber: 19
                                                         }, this),
                                                         " ",
@@ -854,7 +773,7 @@ async function PropertyPage({ params }) {
                                                     ]
                                                 }, void 0, true, {
                                                     fileName: "[project]/app/[lang]/object/[id]/page.tsx",
-                                                    lineNumber: 287,
+                                                    lineNumber: 268,
                                                     columnNumber: 17
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -864,7 +783,7 @@ async function PropertyPage({ params }) {
                                                             size: 18
                                                         }, void 0, false, {
                                                             fileName: "[project]/app/[lang]/object/[id]/page.tsx",
-                                                            lineNumber: 291,
+                                                            lineNumber: 272,
                                                             columnNumber: 19
                                                         }, this),
                                                         " ",
@@ -873,7 +792,7 @@ async function PropertyPage({ params }) {
                                                     ]
                                                 }, void 0, true, {
                                                     fileName: "[project]/app/[lang]/object/[id]/page.tsx",
-                                                    lineNumber: 290,
+                                                    lineNumber: 271,
                                                     columnNumber: 19
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -883,7 +802,7 @@ async function PropertyPage({ params }) {
                                                             size: 18
                                                         }, void 0, false, {
                                                             fileName: "[project]/app/[lang]/object/[id]/page.tsx",
-                                                            lineNumber: 294,
+                                                            lineNumber: 275,
                                                             columnNumber: 19
                                                         }, this),
                                                         " ",
@@ -893,13 +812,103 @@ async function PropertyPage({ params }) {
                                                     ]
                                                 }, void 0, true, {
                                                     fileName: "[project]/app/[lang]/object/[id]/page.tsx",
+                                                    lineNumber: 274,
+                                                    columnNumber: 19
+                                                }, this)
+                                            ]
+                                        }, void 0, true, {
+                                            fileName: "[project]/app/[lang]/object/[id]/page.tsx",
+                                            lineNumber: 267,
+                                            columnNumber: 17
+                                        }, this)
+                                    ]
+                                }, void 0, true, {
+                                    fileName: "[project]/app/[lang]/object/[id]/page.tsx",
+                                    lineNumber: 262,
+                                    columnNumber: 15
+                                }, this),
+                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                    className: "bg-white p-6 md:p-8 rounded-2xl shadow-sm border border-slate-100",
+                                    children: [
+                                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])("h2", {
+                                            className: "text-xl font-bold text-slate-900 mb-6 border-l-4 border-emerald-500 pl-3",
+                                            children: dict.details.features
+                                        }, void 0, false, {
+                                            fileName: "[project]/app/[lang]/object/[id]/page.tsx",
+                                            lineNumber: 282,
+                                            columnNumber: 17
+                                        }, this),
+                                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                            className: "grid grid-cols-2 md:grid-cols-3 gap-y-6 gap-x-4",
+                                            children: [
+                                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])(DetailItem, {
+                                                    label: dict.details.rooms,
+                                                    value: `${property.rooms}`
+                                                }, void 0, false, {
+                                                    fileName: "[project]/app/[lang]/object/[id]/page.tsx",
+                                                    lineNumber: 286,
+                                                    columnNumber: 19
+                                                }, this),
+                                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])(DetailItem, {
+                                                    label: dict.details.area,
+                                                    value: `${property.area} m²`
+                                                }, void 0, false, {
+                                                    fileName: "[project]/app/[lang]/object/[id]/page.tsx",
+                                                    lineNumber: 287,
+                                                    columnNumber: 19
+                                                }, this),
+                                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])(DetailItem, {
+                                                    label: dict.details.floor,
+                                                    value: `${property.floor} / ${property.totalFloors}`
+                                                }, void 0, false, {
+                                                    fileName: "[project]/app/[lang]/object/[id]/page.tsx",
+                                                    lineNumber: 288,
+                                                    columnNumber: 19
+                                                }, this),
+                                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])(DetailItem, {
+                                                    label: dict.details.renovation,
+                                                    value: property.renovation
+                                                }, void 0, false, {
+                                                    fileName: "[project]/app/[lang]/object/[id]/page.tsx",
+                                                    lineNumber: 289,
+                                                    columnNumber: 19
+                                                }, this),
+                                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])(DetailItem, {
+                                                    label: dict.details.buildingType,
+                                                    value: property.buildingType
+                                                }, void 0, false, {
+                                                    fileName: "[project]/app/[lang]/object/[id]/page.tsx",
+                                                    lineNumber: 290,
+                                                    columnNumber: 19
+                                                }, this),
+                                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])(DetailItem, {
+                                                    label: dict.details.location,
+                                                    value: property.district
+                                                }, void 0, false, {
+                                                    fileName: "[project]/app/[lang]/object/[id]/page.tsx",
+                                                    lineNumber: 291,
+                                                    columnNumber: 19
+                                                }, this),
+                                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])(DetailItem, {
+                                                    label: "Balkon",
+                                                    value: property.balcony
+                                                }, void 0, false, {
+                                                    fileName: "[project]/app/[lang]/object/[id]/page.tsx",
+                                                    lineNumber: 292,
+                                                    columnNumber: 19
+                                                }, this),
+                                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])(DetailItem, {
+                                                    label: "Parking",
+                                                    value: property.parking
+                                                }, void 0, false, {
+                                                    fileName: "[project]/app/[lang]/object/[id]/page.tsx",
                                                     lineNumber: 293,
                                                     columnNumber: 19
                                                 }, this)
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/app/[lang]/object/[id]/page.tsx",
-                                            lineNumber: 286,
+                                            lineNumber: 285,
                                             columnNumber: 17
                                         }, this)
                                     ]
@@ -912,101 +921,11 @@ async function PropertyPage({ params }) {
                                     className: "bg-white p-6 md:p-8 rounded-2xl shadow-sm border border-slate-100",
                                     children: [
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])("h2", {
-                                            className: "text-xl font-bold text-slate-900 mb-6 border-l-4 border-emerald-500 pl-3",
-                                            children: dict.details.features
-                                        }, void 0, false, {
-                                            fileName: "[project]/app/[lang]/object/[id]/page.tsx",
-                                            lineNumber: 301,
-                                            columnNumber: 17
-                                        }, this),
-                                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                            className: "grid grid-cols-2 md:grid-cols-3 gap-y-6 gap-x-4",
-                                            children: [
-                                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])(DetailItem, {
-                                                    label: dict.details.rooms,
-                                                    value: `${property.rooms}`
-                                                }, void 0, false, {
-                                                    fileName: "[project]/app/[lang]/object/[id]/page.tsx",
-                                                    lineNumber: 305,
-                                                    columnNumber: 19
-                                                }, this),
-                                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])(DetailItem, {
-                                                    label: dict.details.area,
-                                                    value: `${property.area} m²`
-                                                }, void 0, false, {
-                                                    fileName: "[project]/app/[lang]/object/[id]/page.tsx",
-                                                    lineNumber: 306,
-                                                    columnNumber: 19
-                                                }, this),
-                                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])(DetailItem, {
-                                                    label: dict.details.floor,
-                                                    value: `${property.floor} / ${property.totalFloors}`
-                                                }, void 0, false, {
-                                                    fileName: "[project]/app/[lang]/object/[id]/page.tsx",
-                                                    lineNumber: 307,
-                                                    columnNumber: 19
-                                                }, this),
-                                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])(DetailItem, {
-                                                    label: dict.details.renovation,
-                                                    value: property.renovation
-                                                }, void 0, false, {
-                                                    fileName: "[project]/app/[lang]/object/[id]/page.tsx",
-                                                    lineNumber: 308,
-                                                    columnNumber: 19
-                                                }, this),
-                                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])(DetailItem, {
-                                                    label: dict.details.buildingType,
-                                                    value: property.buildingType
-                                                }, void 0, false, {
-                                                    fileName: "[project]/app/[lang]/object/[id]/page.tsx",
-                                                    lineNumber: 309,
-                                                    columnNumber: 19
-                                                }, this),
-                                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])(DetailItem, {
-                                                    label: dict.details.location,
-                                                    value: property.district
-                                                }, void 0, false, {
-                                                    fileName: "[project]/app/[lang]/object/[id]/page.tsx",
-                                                    lineNumber: 310,
-                                                    columnNumber: 19
-                                                }, this),
-                                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])(DetailItem, {
-                                                    label: "Balkon",
-                                                    value: property.balcony
-                                                }, void 0, false, {
-                                                    fileName: "[project]/app/[lang]/object/[id]/page.tsx",
-                                                    lineNumber: 311,
-                                                    columnNumber: 19
-                                                }, this),
-                                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])(DetailItem, {
-                                                    label: "Parking",
-                                                    value: property.parking
-                                                }, void 0, false, {
-                                                    fileName: "[project]/app/[lang]/object/[id]/page.tsx",
-                                                    lineNumber: 312,
-                                                    columnNumber: 19
-                                                }, this)
-                                            ]
-                                        }, void 0, true, {
-                                            fileName: "[project]/app/[lang]/object/[id]/page.tsx",
-                                            lineNumber: 304,
-                                            columnNumber: 17
-                                        }, this)
-                                    ]
-                                }, void 0, true, {
-                                    fileName: "[project]/app/[lang]/object/[id]/page.tsx",
-                                    lineNumber: 300,
-                                    columnNumber: 15
-                                }, this),
-                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                    className: "bg-white p-6 md:p-8 rounded-2xl shadow-sm border border-slate-100",
-                                    children: [
-                                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])("h2", {
                                             className: "text-xl font-bold text-slate-900 mb-4 border-l-4 border-emerald-500 pl-3",
                                             children: dict.details.description
                                         }, void 0, false, {
                                             fileName: "[project]/app/[lang]/object/[id]/page.tsx",
-                                            lineNumber: 318,
+                                            lineNumber: 299,
                                             columnNumber: 17
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -1014,7 +933,7 @@ async function PropertyPage({ params }) {
                                             children: property.description
                                         }, void 0, false, {
                                             fileName: "[project]/app/[lang]/object/[id]/page.tsx",
-                                            lineNumber: 321,
+                                            lineNumber: 302,
                                             columnNumber: 17
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1027,7 +946,7 @@ async function PropertyPage({ params }) {
                                                             size: 14
                                                         }, void 0, false, {
                                                             fileName: "[project]/app/[lang]/object/[id]/page.tsx",
-                                                            lineNumber: 326,
+                                                            lineNumber: 307,
                                                             columnNumber: 19
                                                         }, this),
                                                         " ",
@@ -1035,7 +954,7 @@ async function PropertyPage({ params }) {
                                                     ]
                                                 }, void 0, true, {
                                                     fileName: "[project]/app/[lang]/object/[id]/page.tsx",
-                                                    lineNumber: 325,
+                                                    lineNumber: 306,
                                                     columnNumber: 17
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -1045,7 +964,7 @@ async function PropertyPage({ params }) {
                                                             size: 14
                                                         }, void 0, false, {
                                                             fileName: "[project]/app/[lang]/object/[id]/page.tsx",
-                                                            lineNumber: 329,
+                                                            lineNumber: 310,
                                                             columnNumber: 19
                                                         }, this),
                                                         " ",
@@ -1053,19 +972,19 @@ async function PropertyPage({ params }) {
                                                     ]
                                                 }, void 0, true, {
                                                     fileName: "[project]/app/[lang]/object/[id]/page.tsx",
-                                                    lineNumber: 328,
+                                                    lineNumber: 309,
                                                     columnNumber: 19
                                                 }, this)
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/app/[lang]/object/[id]/page.tsx",
-                                            lineNumber: 324,
+                                            lineNumber: 305,
                                             columnNumber: 17
                                         }, this)
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/app/[lang]/object/[id]/page.tsx",
-                                    lineNumber: 317,
+                                    lineNumber: 298,
                                     columnNumber: 15
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1076,7 +995,7 @@ async function PropertyPage({ params }) {
                                             children: dict.details.map
                                         }, void 0, false, {
                                             fileName: "[project]/app/[lang]/object/[id]/page.tsx",
-                                            lineNumber: 336,
+                                            lineNumber: 317,
                                             columnNumber: 17
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1089,7 +1008,7 @@ async function PropertyPage({ params }) {
                                                         size: 48
                                                     }, void 0, false, {
                                                         fileName: "[project]/app/[lang]/object/[id]/page.tsx",
-                                                        lineNumber: 341,
+                                                        lineNumber: 322,
                                                         columnNumber: 21
                                                     }, this),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -1097,7 +1016,7 @@ async function PropertyPage({ params }) {
                                                         children: property.district
                                                     }, void 0, false, {
                                                         fileName: "[project]/app/[lang]/object/[id]/page.tsx",
-                                                        lineNumber: 342,
+                                                        lineNumber: 323,
                                                         columnNumber: 21
                                                     }, this),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -1105,7 +1024,7 @@ async function PropertyPage({ params }) {
                                                         children: dict.details.open_map || 'Xaritada ko\'rish'
                                                     }, void 0, false, {
                                                         fileName: "[project]/app/[lang]/object/[id]/page.tsx",
-                                                        lineNumber: 343,
+                                                        lineNumber: 324,
                                                         columnNumber: 21
                                                     }, this),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])("a", {
@@ -1116,30 +1035,30 @@ async function PropertyPage({ params }) {
                                                         children: "Google Maps"
                                                     }, void 0, false, {
                                                         fileName: "[project]/app/[lang]/object/[id]/page.tsx",
-                                                        lineNumber: 346,
+                                                        lineNumber: 327,
                                                         columnNumber: 21
                                                     }, this)
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/app/[lang]/object/[id]/page.tsx",
-                                                lineNumber: 340,
+                                                lineNumber: 321,
                                                 columnNumber: 19
                                             }, this)
                                         }, void 0, false, {
                                             fileName: "[project]/app/[lang]/object/[id]/page.tsx",
-                                            lineNumber: 339,
+                                            lineNumber: 320,
                                             columnNumber: 17
                                         }, this)
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/app/[lang]/object/[id]/page.tsx",
-                                    lineNumber: 335,
+                                    lineNumber: 316,
                                     columnNumber: 15
                                 }, this)
                             ]
                         }, void 0, true, {
                             fileName: "[project]/app/[lang]/object/[id]/page.tsx",
-                            lineNumber: 270,
+                            lineNumber: 251,
                             columnNumber: 13
                         }, this),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1152,29 +1071,29 @@ async function PropertyPage({ params }) {
                                 dict: dict
                             }, void 0, false, {
                                 fileName: "[project]/app/[lang]/object/[id]/page.tsx",
-                                lineNumber: 361,
+                                lineNumber: 342,
                                 columnNumber: 15
                             }, this)
                         }, void 0, false, {
                             fileName: "[project]/app/[lang]/object/[id]/page.tsx",
-                            lineNumber: 360,
+                            lineNumber: 341,
                             columnNumber: 13
                         }, this)
                     ]
                 }, void 0, true, {
                     fileName: "[project]/app/[lang]/object/[id]/page.tsx",
-                    lineNumber: 267,
+                    lineNumber: 248,
                     columnNumber: 11
                 }, this)
             }, void 0, false, {
                 fileName: "[project]/app/[lang]/object/[id]/page.tsx",
-                lineNumber: 266,
+                lineNumber: 247,
                 columnNumber: 9
             }, this)
         ]
     }, void 0, true, {
         fileName: "[project]/app/[lang]/object/[id]/page.tsx",
-        lineNumber: 234,
+        lineNumber: 215,
         columnNumber: 7
     }, this);
 }
@@ -1186,7 +1105,7 @@ function DetailItem({ label, value }) {
                 children: label
             }, void 0, false, {
                 fileName: "[project]/app/[lang]/object/[id]/page.tsx",
-                lineNumber: 378,
+                lineNumber: 359,
                 columnNumber: 9
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -1194,13 +1113,13 @@ function DetailItem({ label, value }) {
                 children: value
             }, void 0, false, {
                 fileName: "[project]/app/[lang]/object/[id]/page.tsx",
-                lineNumber: 379,
+                lineNumber: 360,
                 columnNumber: 9
             }, this)
         ]
     }, void 0, true, {
         fileName: "[project]/app/[lang]/object/[id]/page.tsx",
-        lineNumber: 377,
+        lineNumber: 358,
         columnNumber: 7
     }, this);
 }

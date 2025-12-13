@@ -103,7 +103,7 @@ export default function RootLayout({
     children: React.ReactNode;
 }>) {
     return (
-        <html lang="uz" className={inter.variable}>
+        <html lang="uz" className={inter.variable} suppressHydrationWarning>
         <head>
             {/* ✅ Preconnect to external domains */}
             <link rel="preconnect" href={process.env.NEXT_PUBLIC_API_URL || 'http://194.163.140.30:5000'} />

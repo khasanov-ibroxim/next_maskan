@@ -33,11 +33,7 @@ __turbopack_context__.s([
     "getProperties",
     ()=>getProperties,
     "getPropertyById",
-    ()=>getPropertyById,
-    "getPropertyImages",
-    ()=>getPropertyImages,
-    "getStats",
-    ()=>getStats
+    ()=>getPropertyById
 ]);
 const API_BASE_URL = ("TURBOPACK compile-time value", "http://194.163.140.30:5000") || 'http://194.163.140.30:5000';
 // ✅ Cache for reducing duplicate requests
@@ -147,63 +143,6 @@ async function getLocations() {
         return result.data;
     } catch (error) {
         console.error('❌ Error fetching locations:', error);
-        return [];
-    }
-}
-async function getStats() {
-    try {
-        const url = `${API_BASE_URL}/api/public/stats`;
-        const result = await cachedFetch(url, {
-            next: {
-                revalidate: 300
-            }
-        }, 300 * 1000 // 5 minutes cache
-        );
-        if (!result.success || !result.data) {
-            return {
-                totalProperties: 0,
-                availableRooms: [
-                    '1',
-                    '2',
-                    '3',
-                    '4+'
-                ]
-            };
-        }
-        return result.data;
-    } catch (error) {
-        console.error('❌ Error fetching stats:', error);
-        return {
-            totalProperties: 0,
-            availableRooms: [
-                '1',
-                '2',
-                '3',
-                '4+'
-            ]
-        };
-    }
-}
-async function getPropertyImages(folderUrl) {
-    try {
-        const html = await cachedFetch(folderUrl, {
-            next: {
-                revalidate: 600
-            }
-        }, 600 * 1000);
-        if (typeof html !== 'string') {
-            throw new Error('Invalid response format');
-        }
-        // Extract image URLs from HTML
-        const imgRegex = /src="(\/browse\/[^"]+\.(jpg|jpeg|png|webp))"/gi;
-        const matches = [
-            ...html.matchAll(imgRegex)
-        ];
-        const imageUrls = matches.map((match)=>`${API_BASE_URL}${match[1]}`).filter((url)=>!url.includes('thumbnail'));
-        console.log(`📷 Found ${imageUrls.length} images`);
-        return imageUrls;
-    } catch (error) {
-        console.error('❌ Error fetching images:', error);
         return [];
     }
 }

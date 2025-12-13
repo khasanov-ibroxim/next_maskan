@@ -1,4 +1,4 @@
-import { getPropertyById, getPropertyImages, formatDate } from "@/lib/api";
+import { getPropertyById, formatDate } from "@/lib/api";
 import { notFound } from "next/navigation";
 import { Metadata } from "next";
 import Link from "next/link";
@@ -111,31 +111,12 @@ export default async function PropertyPage({ params }: Props) {
     notFound();
   }
 
-  // ✅ Fetch images with timeout
-  let images: string[] = [];
-  if (property.images > 0 && property.images[0]) {
-    try {
-      console.log('📥 Fetching images for property:', id);
-      const startTime = Date.now();
-
-      images = await Promise.race([
-        getPropertyImages(property.images[0]),
-        new Promise<string[]>((_, reject) =>
-            setTimeout(() => reject(new Error('Timeout')), 8000)
-        )
-      ]);
-
-      const duration = Date.now() - startTime;
-      console.log(`✅ Images loaded in ${duration}ms: ${images.length} images`);
-    } catch (error) {
-      console.error('⚠️ Image loading failed:', error);
-      images = property.mainImage ? [property.mainImage] : [];
-    }
-  }
+  const images = property.images || [];
 
   if (images.length === 0 && property.mainImage) {
-    images = [property.mainImage];
+    images.push(property.mainImage);
   }
+
 
   const formattedDate = formatDate(property.createdAt, lang);
   const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://maskanlux.uz';

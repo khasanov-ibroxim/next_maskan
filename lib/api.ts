@@ -181,73 +181,11 @@ export async function getLocations(): Promise<{ name: string; count: number }[]>
 /**
  * ✅ Fetch statistics
  */
-export async function getStats() {
-  try {
-    const url = `${API_BASE_URL}/api/public/stats`;
 
-    const result = await cachedFetch(
-        url,
-        {
-          next: {
-            revalidate: 300,
-          } as any
-        },
-        300 * 1000 // 5 minutes cache
-    );
-
-    if (!result.success || !result.data) {
-      return {
-        totalProperties: 0,
-        availableRooms: ['1', '2', '3', '4+'],
-      };
-    }
-
-    return result.data;
-
-  } catch (error) {
-    console.error('❌ Error fetching stats:', error);
-    return {
-      totalProperties: 0,
-      availableRooms: ['1', '2', '3', '4+'],
-    };
-  }
-}
 
 /**
- * ✅ Fetch images for a property folder
+ * ✅ OPTIMIZED: Fetch images from dedicated endpoint
  */
-export async function getPropertyImages(folderUrl: string): Promise<string[]> {
-  try {
-    const html = await cachedFetch<string>(
-        folderUrl,
-        {
-          next: { revalidate: 600 } as any // 10 minutes
-        },
-        600 * 1000
-    );
-
-    if (typeof html !== 'string') {
-      throw new Error('Invalid response format');
-    }
-
-    // Extract image URLs from HTML
-    const imgRegex = /src="(\/browse\/[^"]+\.(jpg|jpeg|png|webp))"/gi;
-    const matches = [...html.matchAll(imgRegex)];
-
-    const imageUrls = matches
-        .map(match => `${API_BASE_URL}${match[1]}`)
-        .filter(url => !url.includes('thumbnail'));
-
-    console.log(`📷 Found ${imageUrls.length} images`);
-
-    return imageUrls;
-
-  } catch (error) {
-    console.error('❌ Error fetching images:', error);
-    return [];
-  }
-}
-
 /**
  * ✅ Format date to locale string
  */
@@ -270,6 +208,8 @@ export function formatDate(dateString: string, lang: Locale): string {
     return dateString;
   }
 }
+
+
 
 /**
  * ✅ Clear cache
