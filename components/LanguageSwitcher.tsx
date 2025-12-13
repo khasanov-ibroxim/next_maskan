@@ -72,7 +72,7 @@ function LanguageSwitcherContent() {
   );
 }
 
-// ✅ Loading fallback component
+// ✅ Loading fallback component uhi
 function LanguageSwitcherFallback() {
   return (
       <div className="relative group">
