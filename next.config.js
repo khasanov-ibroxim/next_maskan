@@ -10,6 +10,12 @@ const nextConfig = {
         pathname: '/browse/**',
       },
       {
+        protocol: 'http',
+        hostname: '194.163.140.30',
+        port: '5000',
+        pathname: '/uploads/**', // Add this for uploaded images
+      },
+      {
         protocol: 'https',
         hostname: 'maskanlux.uz',
         pathname: '/**',
@@ -111,6 +117,13 @@ const nextConfig = {
       fullUrl: true,
     },
   },
+
+  // ✅ IMPORTANT: Configure build output
+  output: 'standalone',
+
+  // ✅ Disable static optimization for dynamic routes if needed
+  // This helps with sitemap generation
+  staticPageGenerationTimeout: 120, // 2 minutes timeout
 };
 
 module.exports = nextConfig;

@@ -1,3 +1,4 @@
+// app/[lang]/page.tsx - Debug panel bilan
 import { getProperties } from "@/lib/api";
 import { PropertyCard } from "@/components/PropertyCard";
 import { HeroSection } from "@/components/HeroSection";
@@ -13,7 +14,6 @@ interface HomeProps {
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }
 
-// ✅ Generate metadata for home page
 export async function generateMetadata({ params, searchParams }: HomeProps): Promise<Metadata> {
   const { lang } = await params;
   const sp = await searchParams;
@@ -21,7 +21,6 @@ export async function generateMetadata({ params, searchParams }: HomeProps): Pro
   const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://maskanlux.uz';
   const canonicalUrl = `${baseUrl}/${lang}`;
 
-  // Build title based on filters
   let title = 'Maskan Lux - Ko\'chmas Mulk Toshkentda';
   let description = 'Toshkent shahridagi eng yaxshi ko\'chmas mulk takliflari. Kvartira sotish va ijaraga berish.';
 
@@ -84,27 +83,51 @@ export default async function Home({ params, searchParams }: HomeProps) {
   const sp = await searchParams;
   const dict = await getDictionary(lang);
 
-  // ✅ Parse search params for API
   const filters = {
     rooms: typeof sp.rooms === 'string' ? sp.rooms : undefined,
     location: typeof sp.location === 'string' ? sp.location : undefined,
     type: typeof sp.type === 'string' ? (sp.type as 'Sotuv' | 'Arenda') : undefined,
   };
 
-  // ✅ Fetch from real server
-  const properties = await getProperties({
+  // ✅ Fetch properties
+  let properties = await getProperties({
     lang,
     ...filters
   });
-  console.log(properties)
-  // Group by rooms
-  properties.sort((a, b) => {
-    const dateA = new Date(a.createdAt).getTime();
-    const dateB = new Date(b.createdAt).getTime();
-    return dateB - dateA; // Newest first (descending)
+
+  // ✅ Console log for debugging
+  console.log('📊 API Response:', {
+    total: properties.length,
+    sample: properties[0],
+    allFields: properties.length > 0 ? Object.keys(properties[0]) : []
   });
 
-  // ✅ JSON-LD for ItemList
+  // ✅ Sort by date
+  if (Array.isArray(properties) && properties.length > 0) {
+    properties = [...properties].sort((a, b) => {
+      try {
+        const parseDate = (dateStr: string) => {
+          if (dateStr.includes('.')) {
+            const [datePart, timePart] = dateStr.split(' ');
+            const [day, month, year] = datePart.split('.');
+            return new Date(`${year}-${month}-${day}${timePart ? ` ${timePart}` : ''}`).getTime();
+          }
+          return new Date(dateStr).getTime();
+        };
+
+        const dateA = parseDate(a.createdAt);
+        const dateB = parseDate(b.createdAt);
+
+        if (isNaN(dateA) || isNaN(dateB)) return 0;
+
+        return dateB - dateA;
+      } catch (error) {
+        console.error('Error sorting by date:', error);
+        return 0;
+      }
+    });
+  }
+
   const itemListJsonLd = {
     '@context': 'https://schema.org',
     '@type': 'ItemList',
@@ -117,7 +140,7 @@ export default async function Home({ params, searchParams }: HomeProps) {
         url: `${process.env.NEXT_PUBLIC_SITE_URL}/${lang}/object/${property.id}`,
         offers: {
           '@type': 'Offer',
-          price: property.price,
+          price: property?.price,
           priceCurrency: 'USD',
         },
       },
@@ -126,7 +149,6 @@ export default async function Home({ params, searchParams }: HomeProps) {
 
   return (
       <>
-        {/* ✅ Structured Data */}
         <script
             type="application/ld+json"
             dangerouslySetInnerHTML={{ __html: JSON.stringify(itemListJsonLd) }}
@@ -148,31 +170,37 @@ export default async function Home({ params, searchParams }: HomeProps) {
                 </Link>
               </div>
           )}
-          <section
-              className="container mx-auto px-4"
-              itemScope
-              itemType="https://schema.org/OfferCatalog"
-          >
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          {/* Properties grouped by rooms */}
-          {properties.map((group) => (
 
+          {/* Properties List */}
+          {properties.length > 0 && (
+              <section
+                  className="container mx-auto px-4"
+                  itemScope
+                  itemType="https://schema.org/OfferCatalog"
+              >
+                {/* Stats */}
+                <div className="mb-8 text-center">
+                  <p className="text-slate-600">
+                    Jami <strong className="text-emerald-600">{properties.length}</strong> ta ob'ekt topildi
+                  </p>
+                </div>
 
-
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                  {properties.map((property) => (
                       <PropertyCard
-                          key={group.id}
-                          property={group}
+                          key={property.id}
+                          property={property}
                           lang={lang}
                           dict={dict}
                       />
-
-
-          ))}
-            </div>
-          </section>
+                  ))}
+                </div>
+              </section>
+          )}
         </div>
 
         <ContactSection dict={dict} />
+
       </>
   );
 }

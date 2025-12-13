@@ -1,7 +1,4 @@
-
-// ===========================
-// app/manifest.ts (optional - for PWA)
-// ===========================
+// app/manifest.ts
 import { MetadataRoute } from 'next';
 
 export default function manifest(): MetadataRoute.Manifest {
@@ -9,21 +6,21 @@ export default function manifest(): MetadataRoute.Manifest {
         name: 'Maskan Lux - Ko\'chmas Mulk',
         short_name: 'Maskan Lux',
         description: 'Toshkent shahridagi eng yaxshi ko\'chmas mulk takliflari',
-        start_url: '/',
+        start_url: '/uz',
         display: 'standalone',
         background_color: '#ffffff',
         theme_color: '#10b981',
         icons: [
             {
-                src: '/icon-192.png',
-                sizes: '192x192',
+                src: '/logo.png',
+                sizes: 'any',
                 type: 'image/png',
-            },
-            {
-                src: '/icon-512.png',
-                sizes: '512x512',
-                type: 'image/png',
+                purpose: 'maskable',
             },
         ],
+        categories: ['business', 'real-estate'],
+        lang: 'uz',
+        dir: 'ltr',
+        orientation: 'portrait',
     };
 }
