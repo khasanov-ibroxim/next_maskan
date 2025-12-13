@@ -497,11 +497,6 @@ body {
   grid-column: span 1 / span 1;
 }
 
-.mx-2 {
-  margin-left: .5rem;
-  margin-right: .5rem;
-}
-
 .mx-4 {
   margin-left: 1rem;
   margin-right: 1rem;
@@ -566,10 +561,6 @@ body {
 
 .mr-2 {
   margin-right: .5rem;
-}
-
-.mr-3 {
-  margin-right: .75rem;
 }
 
 .mt-1 {
@@ -671,10 +662,6 @@ body {
   height: 250px;
 }
 
-.h-\[300px\] {
-  height: 300px;
-}
-
 .h-\[400px\] {
   height: 400px;
 }
@@ -713,10 +700,6 @@ body {
 
 .w-16 {
   width: 4rem;
-}
-
-.w-2 {
-  width: .5rem;
 }
 
 .w-20 {
@@ -1168,16 +1151,8 @@ body {
   background-color: #fffc;
 }
 
-.bg-white\/90 {
-  background-color: #ffffffe6;
-}
-
 .bg-white\/95 {
   background-color: #fffffff2;
-}
-
-.bg-\[url\(\'https\:\/\/maps\.googleapis\.com\/maps\/api\/staticmap\?center\=41\.2995\,69\.2401\&zoom\=13\&size\=800x400\&sensor\=false\'\)\] {
-  background-image: url("https://maps.googleapis.com/maps/api/staticmap?center=41.2995,69.2401&zoom=13&size=800x400&sensor=false");
 }
 
 .bg-gradient-to-br {
@@ -1221,14 +1196,6 @@ body {
 
 .to-transparent {
   --tw-gradient-to: transparent var(--tw-gradient-to-position);
-}
-
-.bg-cover {
-  background-size: cover;
-}
-
-.bg-center {
-  background-position: center;
 }
 
 .fill-current {
@@ -1438,10 +1405,6 @@ body {
   letter-spacing: .025em;
 }
 
-.tracking-wider {
-  letter-spacing: .05em;
-}
-
 .text-blue-700 {
   --tw-text-opacity: 1;
   color: rgb(29 78 216 / var(--tw-text-opacity, 1));
@@ -1526,10 +1489,6 @@ body {
   opacity: .2;
 }
 
-.opacity-50 {
-  opacity: .5;
-}
-
 .mix-blend-multiply {
   mix-blend-mode: multiply;
 }
@@ -1571,12 +1530,6 @@ body {
   filter: var(--tw-blur) var(--tw-brightness) var(--tw-contrast) var(--tw-grayscale) var(--tw-hue-rotate) var(--tw-invert) var(--tw-saturate) var(--tw-sepia) var(--tw-drop-shadow);
 }
 
-.backdrop-blur {
-  --tw-backdrop-blur: blur(8px);
-  -webkit-backdrop-filter: var(--tw-backdrop-blur) var(--tw-backdrop-brightness) var(--tw-backdrop-contrast) var(--tw-backdrop-grayscale) var(--tw-backdrop-hue-rotate) var(--tw-backdrop-invert) var(--tw-backdrop-opacity) var(--tw-backdrop-saturate) var(--tw-backdrop-sepia);
-  backdrop-filter: var(--tw-backdrop-blur) var(--tw-backdrop-brightness) var(--tw-backdrop-contrast) var(--tw-backdrop-grayscale) var(--tw-backdrop-hue-rotate) var(--tw-backdrop-invert) var(--tw-backdrop-opacity) var(--tw-backdrop-saturate) var(--tw-backdrop-sepia);
-}
-
 .backdrop-blur-lg {
   --tw-backdrop-blur: blur(16px);
   -webkit-backdrop-filter: var(--tw-backdrop-blur) var(--tw-backdrop-brightness) var(--tw-backdrop-contrast) var(--tw-backdrop-grayscale) var(--tw-backdrop-hue-rotate) var(--tw-backdrop-invert) var(--tw-backdrop-opacity) var(--tw-backdrop-saturate) var(--tw-backdrop-sepia);
@@ -1603,12 +1556,6 @@ body {
 
 .transition-colors {
   transition-property: color, background-color, border-color, text-decoration-color, fill, stroke;
-  transition-duration: .15s;
-  transition-timing-function: cubic-bezier(.4, 0, .2, 1);
-}
-
-.transition-opacity {
-  transition-property: opacity;
   transition-duration: .15s;
   transition-timing-function: cubic-bezier(.4, 0, .2, 1);
 }
@@ -1711,11 +1658,6 @@ body {
   color: rgb(5 150 105 / var(--tw-text-opacity, 1));
 }
 
-.hover\:text-emerald-700:hover {
-  --tw-text-opacity: 1;
-  color: rgb(4 120 87 / var(--tw-text-opacity, 1));
-}
-
 .hover\:underline:hover {
   text-decoration-line: underline;
 }
@@ -1816,10 +1758,6 @@ body {
 .group:hover .group-hover\:text-emerald-600 {
   --tw-text-opacity: 1;
   color: rgb(5 150 105 / var(--tw-text-opacity, 1));
-}
-
-.group:hover .group-hover\:opacity-75 {
-  opacity: .75;
 }
 
 @media (min-width: 640px) {

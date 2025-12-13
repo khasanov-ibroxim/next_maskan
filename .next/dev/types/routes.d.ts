@@ -3,7 +3,7 @@
 
 type AppRoutes = "/" | "/[lang]" | "/[lang]/about" | "/[lang]/contact" | "/[lang]/object/[id]" | "/object/[id]"
 type AppRouteHandlerRoutes = "/api/telegram"
-type PageRoutes = "/Home" | "/PropertyDetails"
+type PageRoutes = never
 type LayoutRoutes = "/" | "/[lang]"
 type RedirectRoutes = "/"
 type RewriteRoutes = never
@@ -17,9 +17,7 @@ interface ParamMap {
   "/[lang]/contact": { "lang": string; }
   "/[lang]/object/[id]": { "lang": string; "id": string; }
   "/api/telegram": {}
-  "/Home": {}
   "/object/[id]": { "id": string; }
-  "/PropertyDetails": {}
 }
 
 

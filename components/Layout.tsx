@@ -1,12 +1,13 @@
 import React, { useState } from 'react';
 import { Menu, X, Home, Phone, Info, Facebook, Instagram, Send } from 'lucide-react';
-import { Link, useLocation } from 'react-router-dom';
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import { Button } from './ui/Button';
 import { APP_NAME } from '../constants';
 
 export const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const location = useLocation();
+  const pathname  = usePathname();
 
   const navLinks = [
     { name: 'Bosh sahifa', path: '/', icon: Home },
@@ -25,7 +26,7 @@ export const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) =>
       {/* Navbar */}
       <nav className="sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-slate-200">
         <div className="container mx-auto px-4 h-16 flex items-center justify-between">
-          <Link to="/" className="flex items-center gap-2">
+          <Link href="/" className="flex items-center gap-2">
             <div className="w-8 h-8 bg-emerald-600 rounded-lg flex items-center justify-center text-white font-bold text-xl">
               M
             </div>
@@ -37,9 +38,9 @@ export const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) =>
             {navLinks.map((link) => (
               <Link 
                 key={link.path} 
-                to={link.path}
+                href={link.path}
                 className={`text-sm font-medium transition-colors hover:text-emerald-600 ${
-                  location.pathname === link.path ? 'text-emerald-600' : 'text-slate-600'
+                  pathname === link.path ? 'text-emerald-600' : 'text-slate-600'
                 }`}
               >
                 {link.name}
@@ -63,7 +64,7 @@ export const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) =>
             {navLinks.map((link) => (
               <Link 
                 key={link.path} 
-                to={link.path}
+                href={link.path}
                 className="flex items-center gap-3 p-3 rounded-lg hover:bg-slate-50 text-slate-700 font-medium"
                 onClick={() => setIsMenuOpen(false)}
               >
@@ -101,9 +102,9 @@ export const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) =>
             <div>
               <h4 className="text-white font-semibold mb-4">Sahifalar</h4>
               <ul className="space-y-2">
-                <li><Link to="/" className="hover:text-emerald-400 transition-colors">Bosh sahifa</Link></li>
-                <li><Link to="/about" className="hover:text-emerald-400 transition-colors">Biz haqimizda</Link></li>
-                <li><Link to="/contact" className="hover:text-emerald-400 transition-colors">Aloqa</Link></li>
+                <li><Link href="/" className="hover:text-emerald-400 transition-colors">Bosh sahifa</Link></li>
+                <li><Link href="/about" className="hover:text-emerald-400 transition-colors">Biz haqimizda</Link></li>
+                <li><Link href="/contact" className="hover:text-emerald-400 transition-colors">Aloqa</Link></li>
               </ul>
             </div>
 
