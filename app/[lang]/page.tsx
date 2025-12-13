@@ -96,7 +96,7 @@ export default async function Home({ params, searchParams }: HomeProps) {
     lang,
     ...filters
   });
-
+  console.log(properties)
   // Group by rooms
   const propertiesByRooms = [1, 2, 3, 4, 5].map(roomCount => {
     const props = properties.filter(p =>

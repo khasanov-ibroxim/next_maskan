@@ -25,10 +25,8 @@ function PropertyCard({ property, lang, dict }) {
     _s();
     const [imageLoaded, setImageLoaded] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])(false);
     const [imageError, setImageError] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])(false);
-    const href = `/${lang}/object/${property.id}`;
     console.log(property);
-    // ✅ Format price with spaces
-    const formattedPrice = property.price > 0 ? property.price.toLocaleString('ru-RU') : 'Kelishiladi';
+    const href = `/${lang}/object/${property.id}`;
     return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$client$2f$app$2d$dir$2f$link$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"], {
         href: href,
         className: "group block",
@@ -44,12 +42,12 @@ function PropertyCard({ property, lang, dict }) {
                                 className: "w-8 h-8 text-slate-400 animate-spin"
                             }, void 0, false, {
                                 fileName: "[project]/components/PropertyCard.tsx",
-                                lineNumber: 37,
+                                lineNumber: 32,
                                 columnNumber: 19
                             }, this)
                         }, void 0, false, {
                             fileName: "[project]/components/PropertyCard.tsx",
-                            lineNumber: 36,
+                            lineNumber: 31,
                             columnNumber: 17
                         }, this),
                         !imageError && property.mainImage ? /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$image$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"], {
@@ -66,7 +64,7 @@ function PropertyCard({ property, lang, dict }) {
                             unoptimized: property.mainImage.includes('194.163.140.30')
                         }, void 0, false, {
                             fileName: "[project]/components/PropertyCard.tsx",
-                            lineNumber: 43,
+                            lineNumber: 38,
                             columnNumber: 17
                         }, this) : /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                             className: "w-full h-full flex items-center justify-center text-slate-400 bg-slate-100",
@@ -74,33 +72,23 @@ function PropertyCard({ property, lang, dict }) {
                                 size: 48
                             }, void 0, false, {
                                 fileName: "[project]/components/PropertyCard.tsx",
-                                lineNumber: 60,
+                                lineNumber: 55,
                                 columnNumber: 19
                             }, this)
                         }, void 0, false, {
                             fileName: "[project]/components/PropertyCard.tsx",
-                            lineNumber: 59,
+                            lineNumber: 54,
                             columnNumber: 17
                         }, this),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                             className: "absolute top-3 right-3 bg-emerald-600 text-white px-3 py-1 rounded-full text-sm font-bold shadow-lg z-10",
-                            children: property.price > 0 ? /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Fragment"], {
-                                children: [
-                                    formattedPrice,
-                                    " ",
-                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
-                                        className: "text-xs",
-                                        children: "y.e."
-                                    }, void 0, false, {
-                                        fileName: "[project]/components/PropertyCard.tsx",
-                                        lineNumber: 68,
-                                        columnNumber: 38
-                                    }, this)
-                                ]
-                            }, void 0, true) : 'Kelishiladi'
-                        }, void 0, false, {
+                            children: [
+                                "$",
+                                property.price.toLocaleString('ru-RU')
+                            ]
+                        }, void 0, true, {
                             fileName: "[project]/components/PropertyCard.tsx",
-                            lineNumber: 65,
+                            lineNumber: 60,
                             columnNumber: 13
                         }, this),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -108,13 +96,13 @@ function PropertyCard({ property, lang, dict }) {
                             children: property.type
                         }, void 0, false, {
                             fileName: "[project]/components/PropertyCard.tsx",
-                            lineNumber: 76,
+                            lineNumber: 65,
                             columnNumber: 13
                         }, this)
                     ]
                 }, void 0, true, {
                     fileName: "[project]/components/PropertyCard.tsx",
-                    lineNumber: 33,
+                    lineNumber: 28,
                     columnNumber: 11
                 }, this),
                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -125,7 +113,7 @@ function PropertyCard({ property, lang, dict }) {
                             children: property.title
                         }, void 0, false, {
                             fileName: "[project]/components/PropertyCard.tsx",
-                            lineNumber: 83,
+                            lineNumber: 72,
                             columnNumber: 13
                         }, this),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -136,7 +124,7 @@ function PropertyCard({ property, lang, dict }) {
                                     className: "mr-1 flex-shrink-0"
                                 }, void 0, false, {
                                     fileName: "[project]/components/PropertyCard.tsx",
-                                    lineNumber: 88,
+                                    lineNumber: 77,
                                     columnNumber: 15
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -144,13 +132,13 @@ function PropertyCard({ property, lang, dict }) {
                                     children: property.district
                                 }, void 0, false, {
                                     fileName: "[project]/components/PropertyCard.tsx",
-                                    lineNumber: 89,
+                                    lineNumber: 78,
                                     columnNumber: 15
                                 }, this)
                             ]
                         }, void 0, true, {
                             fileName: "[project]/components/PropertyCard.tsx",
-                            lineNumber: 87,
+                            lineNumber: 76,
                             columnNumber: 13
                         }, this),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -164,7 +152,7 @@ function PropertyCard({ property, lang, dict }) {
                                             children: dict.card?.rooms || 'Xonalar'
                                         }, void 0, false, {
                                             fileName: "[project]/components/PropertyCard.tsx",
-                                            lineNumber: 95,
+                                            lineNumber: 84,
                                             columnNumber: 17
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -172,13 +160,13 @@ function PropertyCard({ property, lang, dict }) {
                                             children: property.rooms
                                         }, void 0, false, {
                                             fileName: "[project]/components/PropertyCard.tsx",
-                                            lineNumber: 96,
+                                            lineNumber: 85,
                                             columnNumber: 17
                                         }, this)
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/components/PropertyCard.tsx",
-                                    lineNumber: 94,
+                                    lineNumber: 83,
                                     columnNumber: 15
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -189,7 +177,7 @@ function PropertyCard({ property, lang, dict }) {
                                             children: dict.card?.area || 'Maydon'
                                         }, void 0, false, {
                                             fileName: "[project]/components/PropertyCard.tsx",
-                                            lineNumber: 99,
+                                            lineNumber: 88,
                                             columnNumber: 17
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -201,19 +189,19 @@ function PropertyCard({ property, lang, dict }) {
                                                     children: "m²"
                                                 }, void 0, false, {
                                                     fileName: "[project]/components/PropertyCard.tsx",
-                                                    lineNumber: 102,
+                                                    lineNumber: 91,
                                                     columnNumber: 19
                                                 }, this)
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/components/PropertyCard.tsx",
-                                            lineNumber: 100,
+                                            lineNumber: 89,
                                             columnNumber: 17
                                         }, this)
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/components/PropertyCard.tsx",
-                                    lineNumber: 98,
+                                    lineNumber: 87,
                                     columnNumber: 15
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -224,7 +212,7 @@ function PropertyCard({ property, lang, dict }) {
                                             children: dict.card?.floor || 'Qavat'
                                         }, void 0, false, {
                                             fileName: "[project]/components/PropertyCard.tsx",
-                                            lineNumber: 106,
+                                            lineNumber: 95,
                                             columnNumber: 17
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -236,36 +224,36 @@ function PropertyCard({ property, lang, dict }) {
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/components/PropertyCard.tsx",
-                                            lineNumber: 107,
+                                            lineNumber: 96,
                                             columnNumber: 17
                                         }, this)
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/components/PropertyCard.tsx",
-                                    lineNumber: 105,
+                                    lineNumber: 94,
                                     columnNumber: 15
                                 }, this)
                             ]
                         }, void 0, true, {
                             fileName: "[project]/components/PropertyCard.tsx",
-                            lineNumber: 93,
+                            lineNumber: 82,
                             columnNumber: 13
                         }, this)
                     ]
                 }, void 0, true, {
                     fileName: "[project]/components/PropertyCard.tsx",
-                    lineNumber: 82,
+                    lineNumber: 71,
                     columnNumber: 11
                 }, this)
             ]
         }, void 0, true, {
             fileName: "[project]/components/PropertyCard.tsx",
-            lineNumber: 30,
+            lineNumber: 25,
             columnNumber: 9
         }, this)
     }, void 0, false, {
         fileName: "[project]/components/PropertyCard.tsx",
-        lineNumber: 29,
+        lineNumber: 24,
         columnNumber: 7
     }, this);
 }

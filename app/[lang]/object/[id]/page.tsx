@@ -94,7 +94,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     },
     other: {
       'price:amount': property.price.toString(),
-      'price:currency': 'USD',
+      'price:currency': 'У.Е.',
       'property:type': property.type,
       'property:rooms': property.rooms.toString(),
       'property:area': property.area.toString(),
@@ -344,6 +344,7 @@ export default async function PropertyPage({ params }: Props) {
                   district={property.district}
                   location={property.district}
                   price={property.price}
+                  rieltor={property.rieltor}
                   dict={dict}
               />
             </div>

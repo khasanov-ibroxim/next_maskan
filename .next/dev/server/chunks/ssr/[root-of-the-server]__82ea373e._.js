@@ -24,73 +24,16 @@ __turbopack_context__.n(__turbopack_context__.i("[project]/app/[lang]/object/[id
 "[project]/lib/api.ts [app-rsc] (ecmascript)", ((__turbopack_context__) => {
 "use strict";
 
-// ============================================
-// lib/api.ts - OPTIMIZED VERSION
-// ============================================
+// lib/api.ts - SIMPLIFIED
 __turbopack_context__.s([
-    "clearCache",
-    ()=>clearCache,
     "formatDate",
     ()=>formatDate,
-    "getLocations",
-    ()=>getLocations,
     "getProperties",
     ()=>getProperties,
     "getPropertyById",
     ()=>getPropertyById
 ]);
 const API_BASE_URL = ("TURBOPACK compile-time value", "http://194.163.140.30:5000") || 'http://194.163.140.30:5000';
-// ✅ Cache for reducing duplicate requests
-const cache = new Map();
-const CACHE_TTL = 60 * 1000; // 60 seconds
-// ✅ Pending requests map for deduplication
-const pendingRequests = new Map();
-/**
- * ✅ Generic fetch with caching and deduplication
- */ async function cachedFetch(url, options = {}, cacheTTL = CACHE_TTL) {
-    const cacheKey = `${url}_${JSON.stringify(options)}`;
-    // Check cache
-    const cached = cache.get(cacheKey);
-    if (cached && Date.now() - cached.timestamp < cacheTTL) {
-        console.log('💾 Using cached data for:', url);
-        return cached.data;
-    }
-    // Check if request is already pending
-    if (pendingRequests.has(cacheKey)) {
-        console.log('🔄 Reusing pending request for:', url);
-        return pendingRequests.get(cacheKey);
-    }
-    // Make new request
-    const requestPromise = (async ()=>{
-        try {
-            console.log('🌐 Fetching:', url);
-            const response = await fetch(url, {
-                ...options,
-                headers: {
-                    'Content-Type': 'application/json',
-                    ...options.headers
-                }
-            });
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
-            const data = await response.json();
-            // Cache the result
-            cache.set(cacheKey, {
-                data,
-                timestamp: Date.now()
-            });
-            return data;
-        } catch (error) {
-            console.error('❌ Fetch error:', error);
-            throw error;
-        } finally{
-            pendingRequests.delete(cacheKey);
-        }
-    })();
-    pendingRequests.set(cacheKey, requestPromise);
-    return requestPromise;
-}
 async function getProperties(params) {
     try {
         const queryParams = new URLSearchParams();
@@ -99,11 +42,20 @@ async function getProperties(params) {
         if (params.location) queryParams.append('location', params.location);
         if (params.type) queryParams.append('type', params.type);
         const url = `${API_BASE_URL}/api/public/properties?${queryParams.toString()}`;
-        const result = await cachedFetch(url, {
+        console.log('🌐 Fetching properties:', url);
+        const response = await fetch(url, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json'
+            },
             next: {
                 revalidate: 60
             }
         });
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const result = await response.json();
         if (!result.success || !result.data) {
             throw new Error(result.error || 'Failed to fetch properties');
         }
@@ -117,37 +69,33 @@ async function getProperties(params) {
 async function getPropertyById(id, lang) {
     try {
         const url = `${API_BASE_URL}/api/public/properties/${id}?lang=${lang}`;
-        const result = await cachedFetch(url, {
+        console.log('🌐 Fetching property:', url);
+        const response = await fetch(url, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json'
+            },
             next: {
                 revalidate: 60
             }
         });
+        if (!response.ok) {
+            if (response.status === 404) {
+                return null;
+            }
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const result = await response.json();
         if (!result.success || !result.data) {
             return null;
         }
         console.log('✅ Fetched property:', result.data.id);
+        console.log('  Images:', result.data.images?.length || 0);
+        console.log('  Rieltor:', result.data.rieltor);
         return result.data;
     } catch (error) {
         console.error('❌ Error fetching property:', error);
         return null;
-    }
-}
-async function getLocations() {
-    try {
-        const url = `${API_BASE_URL}/api/public/locations`;
-        const result = await cachedFetch(url, {
-            next: {
-                revalidate: 300
-            }
-        }, 300 * 1000 // 5 minutes cache
-        );
-        if (!result.success || !result.data) {
-            return [];
-        }
-        return result.data;
-    } catch (error) {
-        console.error('❌ Error fetching locations:', error);
-        return [];
     }
 }
 function formatDate(dateString, lang) {
@@ -168,132 +116,6 @@ function formatDate(dateString, lang) {
         return dateString;
     }
 }
-function clearCache() {
-    cache.clear();
-    pendingRequests.clear();
-    console.log('🗑️ Cache cleared');
-}
-// ============================================
-// next.config.js - OPTIMIZED
-// ============================================
-/** @type {import('next').NextConfig} */ const nextConfig = {
-    // ✅ Image optimization
-    images: {
-        remotePatterns: [
-            {
-                protocol: 'http',
-                hostname: '194.163.140.30',
-                port: '5000',
-                pathname: '/browse/**'
-            },
-            {
-                protocol: 'https',
-                hostname: 'maskanlux.uz',
-                pathname: '/**'
-            },
-            {
-                protocol: 'https',
-                hostname: 'images.unsplash.com',
-                pathname: '/**'
-            }
-        ],
-        formats: [
-            'image/avif',
-            'image/webp'
-        ],
-        deviceSizes: [
-            640,
-            750,
-            828,
-            1080,
-            1200,
-            1920
-        ],
-        imageSizes: [
-            16,
-            32,
-            48,
-            64,
-            96,
-            128,
-            256
-        ],
-        minimumCacheTTL: 60,
-        dangerouslyAllowSVG: true,
-        contentSecurityPolicy: "default-src 'self'; script-src 'none'; sandbox;"
-    },
-    // ✅ Production optimizations
-    compress: true,
-    poweredByHeader: false,
-    reactStrictMode: true,
-    // ✅ Experimental features
-    experimental: {
-        optimizePackageImports: [
-            'lucide-react'
-        ]
-    },
-    // ✅ Headers for security and caching
-    async headers () {
-        return [
-            {
-                source: '/:path*',
-                headers: [
-                    {
-                        key: 'X-DNS-Prefetch-Control',
-                        value: 'on'
-                    },
-                    {
-                        key: 'X-Content-Type-Options',
-                        value: 'nosniff'
-                    },
-                    {
-                        key: 'X-Frame-Options',
-                        value: 'SAMEORIGIN'
-                    },
-                    {
-                        key: 'X-XSS-Protection',
-                        value: '1; mode=block'
-                    },
-                    {
-                        key: 'Referrer-Policy',
-                        value: 'origin-when-cross-origin'
-                    }
-                ]
-            },
-            // Cache static assets
-            {
-                source: '/static/:path*',
-                headers: [
-                    {
-                        key: 'Cache-Control',
-                        value: 'public, max-age=31536000, immutable'
-                    }
-                ]
-            },
-            // Cache images
-            {
-                source: '/_next/image/:path*',
-                headers: [
-                    {
-                        key: 'Cache-Control',
-                        value: 'public, max-age=31536000, immutable'
-                    }
-                ]
-            }
-        ];
-    },
-    // ✅ Redirects
-    async redirects () {
-        return [
-            {
-                source: '/',
-                destination: '/uz',
-                permanent: false
-            }
-        ];
-    }
-};
-module.exports = nextConfig;
 }),
 "[project]/components/Gallery.tsx [app-rsc] (client reference proxy) <module evaluation>", ((__turbopack_context__) => {
 "use strict";
@@ -482,7 +304,7 @@ async function generateMetadata({ params }) {
         },
         other: {
             'price:amount': property.price.toString(),
-            'price:currency': 'USD',
+            'price:currency': 'У.Е.',
             'property:type': property.type,
             'property:rooms': property.rooms.toString(),
             'property:area': property.area.toString()
@@ -1068,6 +890,7 @@ async function PropertyPage({ params }) {
                                 district: property.district,
                                 location: property.district,
                                 price: property.price,
+                                rieltor: property.rieltor,
                                 dict: dict
                             }, void 0, false, {
                                 fileName: "[project]/app/[lang]/object/[id]/page.tsx",
@@ -1105,7 +928,7 @@ function DetailItem({ label, value }) {
                 children: label
             }, void 0, false, {
                 fileName: "[project]/app/[lang]/object/[id]/page.tsx",
-                lineNumber: 359,
+                lineNumber: 360,
                 columnNumber: 9
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -1113,13 +936,13 @@ function DetailItem({ label, value }) {
                 children: value
             }, void 0, false, {
                 fileName: "[project]/app/[lang]/object/[id]/page.tsx",
-                lineNumber: 360,
+                lineNumber: 361,
                 columnNumber: 9
             }, this)
         ]
     }, void 0, true, {
         fileName: "[project]/app/[lang]/object/[id]/page.tsx",
-        lineNumber: 358,
+        lineNumber: 359,
         columnNumber: 7
     }, this);
 }

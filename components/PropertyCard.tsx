@@ -17,13 +17,8 @@ interface PropertyCardProps {
 export function PropertyCard({ property, lang, dict }: PropertyCardProps) {
   const [imageLoaded, setImageLoaded] = useState(false);
   const [imageError, setImageError] = useState(false);
-
-  const href = `/${lang}/object/${property.id}`;
   console.log(property)
-  // ✅ Format price with spaces
-  const formattedPrice = property.price > 0
-      ? property.price.toLocaleString('ru-RU')
-      : 'Kelishiladi';
+  const href = `/${lang}/object/${property.id}`;
 
   return (
       <Link href={href} className="group block">
@@ -61,15 +56,9 @@ export function PropertyCard({ property, lang, dict }: PropertyCardProps) {
                 </div>
             )}
 
-            {/* ✅ Price Badge with y.e. */}
+            {/* Price Badge */}
             <div className="absolute top-3 right-3 bg-emerald-600 text-white px-3 py-1 rounded-full text-sm font-bold shadow-lg z-10">
-              {property.price > 0 ? (
-                  <>
-                    {formattedPrice} <span className="text-xs">y.e.</span>
-                  </>
-              ) : (
-                  'Kelishiladi'
-              )}
+              ${property.price.toLocaleString('ru-RU')}
             </div>
 
             {/* Type Badge */}

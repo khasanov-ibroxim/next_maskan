@@ -19,7 +19,7 @@ export const PropertySidebar = ({
                                     district,
                                     location,
                                     price,
-                                    rieltor = 'Maskan Lux Agent', // ✅ Default value
+                                    rieltor , // ✅ Default value
                                     dict
                                 }: PropertySidebarProps) => {
     const [isFavorite, setIsFavorite] = useState(false);
