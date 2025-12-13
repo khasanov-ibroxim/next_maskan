@@ -1,8 +1,8 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import Image from 'next/image';
-import { ChevronLeft, ChevronRight, X, Loader2 } from 'lucide-react';
+import { ChevronLeft, ChevronRight, X, ZoomIn, ZoomOut } from 'lucide-react';
 
 interface GalleryProps {
     images: string[];
@@ -10,230 +10,261 @@ interface GalleryProps {
 }
 
 export function Gallery({ images, title }: GalleryProps) {
-    const [selectedImage, setSelectedImage] = useState<number | null>(null);
-    const [loadedImages, setLoadedImages] = useState<Set<number>>(new Set());
-    const [failedImages, setFailedImages] = useState<Set<number>>(new Set());
-    console.log(images);
+    const [selectedIndex, setSelectedIndex] = useState(0);
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [zoom, setZoom] = useState(1);
+
     // ✅ Keyboard navigation
-    useState(() => {
-        const handleKeyDown = (e: KeyboardEvent) => {
-            if (selectedImage === null) return;
+    const handleKeyDown = useCallback((e: KeyboardEvent) => {
+        if (!isModalOpen) return;
 
-            if (e.key === 'Escape') {
-                closeLightbox();
-            } else if (e.key === 'ArrowRight') {
-                nextImage();
-            } else if (e.key === 'ArrowLeft') {
-                prevImage();
-            }
+        switch (e.key) {
+            case 'Escape':
+                setIsModalOpen(false);
+                setZoom(1);
+                break;
+            case 'ArrowLeft':
+                e.preventDefault();
+                setSelectedIndex(prev => (prev > 0 ? prev - 1 : images.length - 1));
+                setZoom(1);
+                break;
+            case 'ArrowRight':
+                e.preventDefault();
+                setSelectedIndex(prev => (prev < images.length - 1 ? prev + 1 : 0));
+                setZoom(1);
+                break;
+            case '+':
+            case '=':
+                e.preventDefault();
+                setZoom(prev => Math.min(prev + 0.2, 3));
+                break;
+            case '-':
+                e.preventDefault();
+                setZoom(prev => Math.max(prev - 0.2, 0.5));
+                break;
+        }
+    }, [isModalOpen, images.length]);
+
+    // ✅ Add/remove keyboard listener
+    useEffect(() => {
+        if (isModalOpen) {
+            window.addEventListener('keydown', handleKeyDown);
+            // ✅ Prevent body scroll
+            document.body.style.overflow = 'hidden';
+        } else {
+            document.body.style.overflow = 'unset';
+        }
+
+        return () => {
+            window.removeEventListener('keydown', handleKeyDown);
+            document.body.style.overflow = 'unset';
         };
+    }, [isModalOpen, handleKeyDown]);
 
-        document.addEventListener('keydown', handleKeyDown);
-        return () => document.removeEventListener('keydown', handleKeyDown);
-    });
+    const openModal = (index: number) => {
+        setSelectedIndex(index);
+        setIsModalOpen(true);
+        setZoom(1);
+    };
 
-    if (!images || images.length === 0) {
+    const closeModal = () => {
+        setIsModalOpen(false);
+        setZoom(1);
+    };
+
+    const goToPrevious = () => {
+        setSelectedIndex(prev => (prev > 0 ? prev - 1 : images.length - 1));
+        setZoom(1);
+    };
+
+    const goToNext = () => {
+        setSelectedIndex(prev => (prev < images.length - 1 ? prev + 1 : 0));
+        setZoom(1);
+    };
+
+    const handleZoomIn = () => {
+        setZoom(prev => Math.min(prev + 0.2, 3));
+    };
+
+    const handleZoomOut = () => {
+        setZoom(prev => Math.max(prev - 0.2, 0.5));
+    };
+
+    if (images.length === 0) {
         return (
             <div className="bg-slate-200 rounded-2xl h-96 flex items-center justify-center">
-                <p className="text-slate-500">Rasmlar mavjud emas</p>
+                <p className="text-slate-500">Rasmlar yuklanmoqda...</p>
             </div>
         );
     }
 
-    const handleImageLoad = (index: number) => {
-        setLoadedImages(prev => new Set([...prev, index]));
-    };
-
-    const handleImageError = (index: number) => {
-        setFailedImages(prev => new Set([...prev, index]));
-        console.error(`❌ Image failed to load: ${images[index]}`);
-    };
-
-    const openLightbox = (index: number) => {
-        setSelectedImage(index);
-        document.body.style.overflow = 'hidden';
-    };
-
-    const closeLightbox = () => {
-        setSelectedImage(null);
-        document.body.style.overflow = 'auto';
-    };
-
-    const nextImage = () => {
-        if (selectedImage !== null) {
-            setSelectedImage((selectedImage + 1) % images.length);
-        }
-    };
-
-    const prevImage = () => {
-        if (selectedImage !== null) {
-            setSelectedImage((selectedImage - 1 + images.length) % images.length);
-        }
-    };
-
-    // Filter out failed images
-    const validImages = images.filter((_, index) => !failedImages.has(index));
-
     return (
         <>
-            {/* Main Gallery */}
-            <div className="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
+            {/* Gallery Grid */}
+            <div className="grid grid-cols-4 gap-2 md:gap-4">
                 {/* Main Image */}
                 <div
-                    className="relative h-[400px] md:h-[500px] bg-slate-100 cursor-pointer group"
-                    onClick={() => openLightbox(0)}
+                    className="col-span-4 md:col-span-2 row-span-2 relative group cursor-pointer overflow-hidden rounded-2xl"
+                    onClick={() => openModal(0)}
                 >
-                    {!loadedImages.has(0) && !failedImages.has(0) && (
-                        <div className="absolute inset-0 flex items-center justify-center bg-slate-100">
-                            <Loader2 className="w-12 h-12 text-slate-400 animate-spin" />
-                        </div>
-                    )}
-
-                    {!failedImages.has(0) && (
-                        <Image
-                            src={images[0]}
-                            alt={`${title} - Main`}
-                            fill
-                            className={`object-contain transition-opacity duration-300 ${
-                                loadedImages.has(0) ? 'opacity-100' : 'opacity-0'
-                            }`}
-                            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 66vw, 50vw"
-                            priority
-                            onLoad={() => handleImageLoad(0)}
-                            onError={() => handleImageError(0)}
-                            unoptimized={images[0].includes('194.163.140.30')} // Skip optimization for local server
-                        />
-                    )}
-
-                    {/* Hover Overlay */}
-                    <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-20 transition-all duration-300 flex items-center justify-center">
-            <span className="text-white opacity-0 group-hover:opacity-100 transition-opacity text-lg font-semibold">
-              🔍 Ko'rish
-            </span>
+                    <Image
+                        src={images[0]}
+                        alt={`${title} - Main`}
+                        width={800}
+                        height={600}
+                        className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+                        priority
+                    />
+                    <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors duration-300 flex items-center justify-center">
+                        <ZoomIn className="opacity-0 group-hover:opacity-100 text-white transition-opacity" size={40} />
                     </div>
                 </div>
 
-                {/* Thumbnails */}
-                {validImages.length > 1 && (
-                    <div className="p-4 bg-slate-50">
-                        <div className="grid grid-cols-4 md:grid-cols-6 lg:grid-cols-8 gap-2">
-                            {validImages.slice(0, 8).map((image, index) => (
-                                <div
-                                    key={index}
-                                    className={`relative h-20 rounded-lg overflow-hidden cursor-pointer border-2 transition-all ${
-                                        index === 0
-                                            ? 'border-emerald-500 ring-2 ring-emerald-200'
-                                            : 'border-slate-200 hover:border-emerald-400'
-                                    }`}
-                                    onClick={() => openLightbox(index)}
-                                >
-                                    {!loadedImages.has(index) && !failedImages.has(index) && (
-                                        <div className="absolute inset-0 flex items-center justify-center bg-slate-200">
-                                            <Loader2 className="w-6 h-6 text-slate-400 animate-spin" />
-                                        </div>
-                                    )}
-
-                                    <Image
-                                        src={image}
-                                        alt={`${title} - ${index + 1}`}
-                                        fill
-                                        className={`object-cover transition-all duration-300 ${
-                                            loadedImages.has(index) ? 'opacity-100' : 'opacity-0'
-                                        }`}
-                                        sizes="150px"
-                                        onLoad={() => handleImageLoad(index)}
-                                        onError={() => handleImageError(index)}
-                                        unoptimized={image.includes('194.163.140.30')}
-                                    />
-                                </div>
-                            ))}
-
-                            {validImages.length > 8 && (
-                                <div
-                                    className="relative h-20 rounded-lg overflow-hidden cursor-pointer border-2 border-slate-200 hover:border-emerald-400 bg-slate-200 flex items-center justify-center"
-                                    onClick={() => openLightbox(8)}
-                                >
-                  <span className="text-slate-600 font-bold text-sm">
-                    +{validImages.length - 8}
-                  </span>
-                                </div>
-                            )}
+                {/* Thumbnail Grid */}
+                {images.slice(1, 5).map((image, index) => (
+                    <div
+                        key={index + 1}
+                        className="relative group cursor-pointer overflow-hidden rounded-xl aspect-square"
+                        onClick={() => openModal(index + 1)}
+                    >
+                        <Image
+                            src={image}
+                            alt={`${title} - ${index + 2}`}
+                            width={300}
+                            height={300}
+                            className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+                        />
+                        <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors duration-300 flex items-center justify-center">
+                            <ZoomIn className="opacity-0 group-hover:opacity-100 text-white transition-opacity" size={24} />
                         </div>
+                        {index === 3 && images.length > 5 && (
+                            <div className="absolute inset-0 bg-black/60 flex items-center justify-center">
+                                <span className="text-white text-2xl font-bold">+{images.length - 5}</span>
+                            </div>
+                        )}
                     </div>
-                )}
+                ))}
             </div>
 
-            {/* Lightbox */}
-            {selectedImage !== null && (
+            {/* ✅ Full-screen Modal */}
+            {isModalOpen && (
                 <div
-                    className="fixed inset-0 bg-black bg-opacity-95 z-50 flex items-center justify-center p-4"
-                    onClick={closeLightbox}
+                    className="fixed inset-0 z-[9999] bg-black/95 flex items-center justify-center"
+                    onClick={closeModal}
                 >
                     {/* Close Button */}
                     <button
-                        className="absolute top-4 right-4 text-white hover:text-emerald-400 transition-colors z-10"
-                        onClick={closeLightbox}
+                        onClick={closeModal}
+                        className="absolute top-4 right-4 z-[10000] p-3 rounded-full bg-white/10 hover:bg-white/20 text-white transition-colors"
+                        aria-label="Close"
                     >
-                        <X size={32} />
+                        <X size={24} />
                     </button>
 
-                    {/* Navigation */}
-                    {validImages.length > 1 && (
+                    {/* Image Counter */}
+                    <div className="absolute top-4 left-4 z-[10000] px-4 py-2 rounded-full bg-white/10 text-white font-medium">
+                        {selectedIndex + 1} / {images.length}
+                    </div>
+
+                    {/* Zoom Controls */}
+                    <div className="absolute top-4 left-1/2 -translate-x-1/2 z-[10000] flex gap-2">
+                        <button
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                handleZoomOut();
+                            }}
+                            className="p-3 rounded-full bg-white/10 hover:bg-white/20 text-white transition-colors"
+                            aria-label="Zoom Out"
+                        >
+                            <ZoomOut size={20} />
+                        </button>
+                        <button
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                handleZoomIn();
+                            }}
+                            className="p-3 rounded-full bg-white/10 hover:bg-white/20 text-white transition-colors"
+                            aria-label="Zoom In"
+                        >
+                            <ZoomIn size={20} />
+                        </button>
+                    </div>
+
+                    {/* Navigation Buttons */}
+                    {images.length > 1 && (
                         <>
                             <button
-                                className="absolute left-4 text-white hover:text-emerald-400 transition-colors z-10 bg-black bg-opacity-50 p-3 rounded-full"
                                 onClick={(e) => {
                                     e.stopPropagation();
-                                    prevImage();
+                                    goToPrevious();
                                 }}
+                                className="absolute left-4 z-[10000] p-4 rounded-full bg-white/10 hover:bg-white/20 text-white transition-colors"
+                                aria-label="Previous"
                             >
                                 <ChevronLeft size={32} />
                             </button>
 
                             <button
-                                className="absolute right-4 text-white hover:text-emerald-400 transition-colors z-10 bg-black bg-opacity-50 p-3 rounded-full"
                                 onClick={(e) => {
                                     e.stopPropagation();
-                                    nextImage();
+                                    goToNext();
                                 }}
+                                className="absolute right-4 z-[10000] p-4 rounded-full bg-white/10 hover:bg-white/20 text-white transition-colors"
+                                aria-label="Next"
                             >
                                 <ChevronRight size={32} />
                             </button>
                         </>
                     )}
 
-                    {/* Image Counter */}
-                    <div className="absolute top-4 left-4 text-white font-semibold text-lg bg-black bg-opacity-50 px-4 py-2 rounded-full">
-                        {selectedImage + 1} / {validImages.length}
-                    </div>
-
-                    {/* Main Image */}
+                    {/* ✅ Main Image with zoom */}
                     <div
-                        className="relative w-full h-full max-w-6xl max-h-[90vh] flex items-center justify-center"
+                        className="relative max-w-[90vw] max-h-[90vh] overflow-auto"
                         onClick={(e) => e.stopPropagation()}
                     >
-                        {!loadedImages.has(selectedImage) && !failedImages.has(selectedImage) && (
-                            <Loader2 className="w-16 h-16 text-white animate-spin absolute" />
-                        )}
-
                         <Image
-                            src={validImages[selectedImage]}
-                            alt={`${title} - ${selectedImage + 1}`}
-                            fill
-                            className={`object-contain transition-opacity duration-300 ${
-                                loadedImages.has(selectedImage) ? 'opacity-100' : 'opacity-0'
-                            }`}
-                            sizes="100vw"
+                            src={images[selectedIndex]}
+                            alt={`${title} - ${selectedIndex + 1}`}
+                            width={1920}
+                            height={1080}
+                            className="w-auto h-auto max-w-full max-h-[90vh] object-contain"
+                            style={{ transform: `scale(${zoom})`, transition: 'transform 0.2s' }}
                             priority
-                            onLoad={() => handleImageLoad(selectedImage)}
-                            onError={() => handleImageError(selectedImage)}
-                            unoptimized={validImages[selectedImage].includes('194.163.140.30')}
                         />
                     </div>
 
-                    {/* Keyboard Hint */}
-                    <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 text-white text-sm bg-black bg-opacity-50 px-4 py-2 rounded-full">
-                        ← → klavishlar bilan boshqaring • ESC yopish
+                    {/* ✅ Thumbnail Strip */}
+                    {images.length > 1 && (
+                        <div className="absolute bottom-4 left-1/2 -translate-x-1/2 z-[10000] flex gap-2 overflow-x-auto max-w-[90vw] px-4 py-2 bg-black/30 rounded-full">
+                            {images.map((image, index) => (
+                                <button
+                                    key={index}
+                                    onClick={(e) => {
+                                        e.stopPropagation();
+                                        setSelectedIndex(index);
+                                        setZoom(1);
+                                    }}
+                                    className={`flex-shrink-0 w-16 h-16 rounded-lg overflow-hidden border-2 transition-all ${
+                                        index === selectedIndex
+                                            ? 'border-emerald-500 scale-110'
+                                            : 'border-white/30 hover:border-white/60'
+                                    }`}
+                                >
+                                    <Image
+                                        src={image}
+                                        alt={`Thumbnail ${index + 1}`}
+                                        width={64}
+                                        height={64}
+                                        className="w-full h-full object-cover"
+                                    />
+                                </button>
+                            ))}
+                        </div>
+                    )}
+
+                    {/* ✅ Keyboard Hints */}
+                    <div className="absolute bottom-20 left-1/2 -translate-x-1/2 z-[10000] text-white/60 text-sm text-center">
+                        <p>← → : Navigate | ESC : Close | +/- : Zoom</p>
                     </div>
                 </div>
             )}

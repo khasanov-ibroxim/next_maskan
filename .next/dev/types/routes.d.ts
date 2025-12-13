@@ -4,7 +4,7 @@
 type AppRoutes = "/" | "/[lang]" | "/[lang]/object/[id]" | "/object/[id]"
 type PageRoutes = "/Home" | "/PropertyDetails"
 type LayoutRoutes = "/" | "/[lang]"
-type RedirectRoutes = never
+type RedirectRoutes = "/"
 type RewriteRoutes = never
 type Routes = AppRoutes | PageRoutes | LayoutRoutes | RedirectRoutes | RewriteRoutes
 

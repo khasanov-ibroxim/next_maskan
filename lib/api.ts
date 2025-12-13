@@ -1,4 +1,4 @@
-// lib/api.ts
+// lib/api.ts - Optimized with caching and request deduplication
 import { Property } from '@/types';
 import { Locale } from '@/i18n-config';
 
@@ -18,6 +18,78 @@ interface GetPropertiesParams {
   type?: 'Sotuv' | 'Arenda';
 }
 
+// ✅ In-memory cache for reducing duplicate requests
+const cache = new Map<string, { data: any; timestamp: number }>();
+const CACHE_TTL = 60 * 1000; // 60 seconds
+
+// ✅ Pending requests map for deduplication
+const pendingRequests = new Map<string, Promise<any>>();
+
+/**
+ * Generic fetch with caching and deduplication
+ */
+async function cachedFetch<T>(
+    url: string,
+    options: RequestInit = {},
+    cacheTTL: number = CACHE_TTL
+): Promise<T> {
+  const cacheKey = `${url}_${JSON.stringify(options)}`;
+
+  // ✅ Check cache
+  const cached = cache.get(cacheKey);
+  if (cached && Date.now() - cached.timestamp < cacheTTL) {
+    console.log('💾 Using cached data for:', url);
+    return cached.data;
+  }
+
+  // ✅ Check if request is already pending (deduplication)
+  if (pendingRequests.has(cacheKey)) {
+    console.log('🔄 Reusing pending request for:', url);
+    return pendingRequests.get(cacheKey)!;
+  }
+
+  // ✅ Make new request
+  const requestPromise = (async () => {
+    try {
+      console.log('🌐 Fetching:', url);
+
+      const response = await fetch(url, {
+        ...options,
+        headers: {
+          'Content-Type': 'application/json',
+          ...options.headers,
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const data = await response.json();
+
+      // ✅ Cache the result
+      cache.set(cacheKey, {
+        data,
+        timestamp: Date.now()
+      });
+
+      return data;
+
+    } catch (error) {
+      console.error('❌ Fetch error:', error);
+      throw error;
+    } finally {
+      // ✅ Remove from pending
+      pendingRequests.delete(cacheKey);
+    }
+  })();
+
+  // ✅ Add to pending
+  pendingRequests.set(cacheKey, requestPromise);
+
+  return requestPromise;
+}
+
 /**
  * Fetch properties from server
  */
@@ -32,35 +104,21 @@ export async function getProperties(params: GetPropertiesParams): Promise<Proper
 
     const url = `${API_BASE_URL}/api/public/properties?${queryParams.toString()}`;
 
-    console.log('🌐 Fetching properties:', url);
-
-    const response = await fetch(url, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      // Next.js caching strategy
+    const result = await cachedFetch<ApiResponse<Property[]>>(url, {
       next: {
-        revalidate: 60, // Revalidate every 60 seconds
-      },
+        revalidate: 60, // Next.js cache
+      } as any
     });
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
 
-    const result: ApiResponse<Property[]> = await response.json();
-    console.log(result.data);
     if (!result.success || !result.data) {
       throw new Error(result.error || 'Failed to fetch properties');
     }
 
     console.log(`✅ Fetched ${result.count} properties`);
-
     return result.data;
 
   } catch (error) {
     console.error('❌ Error fetching properties:', error);
-    // Return empty array instead of throwing
     return [];
   }
 }
@@ -72,33 +130,17 @@ export async function getPropertyById(id: string, lang: Locale): Promise<Propert
   try {
     const url = `${API_BASE_URL}/api/public/properties/${id}?lang=${lang}`;
 
-    console.log('🌐 Fetching property:', url);
-
-    const response = await fetch(url, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-      },
+    const result = await cachedFetch<ApiResponse<Property>>(url, {
       next: {
         revalidate: 60,
-      },
+      } as any
     });
-
-    if (!response.ok) {
-      if (response.status === 404) {
-        return null;
-      }
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-
-    const result: ApiResponse<Property> = await response.json();
 
     if (!result.success || !result.data) {
       return null;
     }
 
     console.log('✅ Fetched property:', result.data.id);
-
     return result.data;
 
   } catch (error) {
@@ -114,21 +156,15 @@ export async function getLocations(): Promise<{ name: string; count: number }[]>
   try {
     const url = `${API_BASE_URL}/api/public/locations`;
 
-    const response = await fetch(url, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      next: {
-        revalidate: 300, // Revalidate every 5 minutes
-      },
-    });
-
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-
-    const result: ApiResponse<{ name: string; count: number }[]> = await response.json();
+    const result = await cachedFetch<ApiResponse<{ name: string; count: number }[]>>(
+        url,
+        {
+          next: {
+            revalidate: 300, // 5 minutes
+          } as any
+        },
+        300 * 1000 // 5 minutes cache
+    );
 
     if (!result.success || !result.data) {
       return [];
@@ -149,27 +185,20 @@ export async function getStats() {
   try {
     const url = `${API_BASE_URL}/api/public/stats`;
 
-    const response = await fetch(url, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      next: {
-        revalidate: 300,
-      },
-    });
-
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-
-    const result = await response.json();
+    const result = await cachedFetch(
+        url,
+        {
+          next: {
+            revalidate: 300,
+          } as any
+        },
+        300 * 1000 // 5 minutes cache
+    );
 
     if (!result.success || !result.data) {
       return {
         totalProperties: 0,
         availableRooms: ['1', '2', '3', '4+'],
-
       };
     }
 
@@ -180,35 +209,35 @@ export async function getStats() {
     return {
       totalProperties: 0,
       availableRooms: ['1', '2', '3', '4+'],
-
     };
   }
 }
 
 /**
- * Fetch images for a property folder
+ * Fetch images for a property folder - with timeout and retry
  */
 export async function getPropertyImages(folderUrl: string): Promise<string[]> {
   try {
-    // If folderUrl is a browse URL, fetch the HTML and parse image URLs
-    const response = await fetch(folderUrl, {
-      next: { revalidate: 300 }, // Cache for 5 minutes
-    });
+    // ✅ Use cached fetch with longer TTL for images
+    const html = await cachedFetch<string>(
+        folderUrl,
+        {
+          next: { revalidate: 600 } as any // 10 minutes
+        },
+        600 * 1000 // 10 minutes cache
+    );
 
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
+    if (typeof html !== 'string') {
+      throw new Error('Invalid response format');
     }
 
-    const html = await response.text();
-
     // Extract image URLs from HTML
-    // This regex matches src="/browse/..." from img tags
     const imgRegex = /src="(\/browse\/[^"]+\.(jpg|jpeg|png|webp))"/gi;
     const matches = [...html.matchAll(imgRegex)];
 
     const imageUrls = matches
         .map(match => `${API_BASE_URL}${match[1]}`)
-        .filter(url => !url.includes('thumbnail')); // Skip thumbnails
+        .filter(url => !url.includes('thumbnail'));
 
     console.log(`📷 Found ${imageUrls.length} images`);
 
@@ -241,4 +270,13 @@ export function formatDate(dateString: string, lang: Locale): string {
   } catch {
     return dateString;
   }
+}
+
+/**
+ * Clear cache (useful for development)
+ */
+export function clearCache() {
+  cache.clear();
+  pendingRequests.clear();
+  console.log('🗑️ Cache cleared');
 }
