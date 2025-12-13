@@ -14,6 +14,11 @@ const nextConfig = {
         hostname: 'maskanlux.uz',
         pathname: '/**',
       },
+      {
+        protocol: 'https',
+        hostname: 'images.unsplash.com',
+        pathname: '/**',
+      },
     ],
     formats: ['image/avif', 'image/webp'],
     deviceSizes: [640, 750, 828, 1080, 1200, 1920, 2048, 3840],
@@ -21,17 +26,18 @@ const nextConfig = {
     minimumCacheTTL: 60,
   },
 
-  // ✅ Internationalization
-  i18n: undefined, // We handle i18n via middleware
-
   // ✅ Production optimizations
   compress: true,
   poweredByHeader: false,
+  reactStrictMode: true,
 
   // ✅ Experimental features
   experimental: {
-    optimizePackageImports: ['lucide-react', 'antd'],
+    optimizePackageImports: ['lucide-react'],
   },
+
+  // ✅ CRITICAL: Turbopack config (empty to silence warning)
+  turbopack: {},
 
   // ✅ Headers for security and caching
   async headers() {
@@ -91,34 +97,12 @@ const nextConfig = {
   // ✅ Redirects
   async redirects() {
     return [
-      // Redirect root to default locale
       {
         source: '/',
         destination: '/uz',
         permanent: false,
       },
-      // Redirect old URLs if any
-      // {
-      //   source: '/old-path',
-      //   destination: '/uz/new-path',
-      //   permanent: true,
-      // },
     ];
-  },
-
-  // ✅ Webpack optimizations
-  webpack: (config, { isServer }) => {
-    // Optimize bundle size
-    if (!isServer) {
-      config.resolve.fallback = {
-        ...config.resolve.fallback,
-        fs: false,
-        net: false,
-        tls: false,
-      };
-    }
-
-    return config;
   },
 
   // ✅ Logging
@@ -127,9 +111,6 @@ const nextConfig = {
       fullUrl: true,
     },
   },
-
-  // ✅ Output standalone for Docker deployment (optional)
-  // output: 'standalone',
 };
 
 module.exports = nextConfig;

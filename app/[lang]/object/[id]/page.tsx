@@ -16,7 +16,6 @@ interface Props {
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { id, lang } = await params;
   const property = await getPropertyById(id, lang);
-
   if (!property) {
     return {
       title: "Ko'chmas mulk topilmadi | Maskan Lux",
@@ -114,7 +113,7 @@ export default async function PropertyPage({ params }: Props) {
 
   // ✅ Fetch images with timeout
   let images: string[] = [];
-  if (property.images.length > 0 && property.images[0]) {
+  if (property.images > 0 && property.images[0]) {
     try {
       console.log('📥 Fetching images for property:', id);
       const startTime = Date.now();
@@ -282,7 +281,7 @@ export default async function PropertyPage({ params }: Props) {
               <div className="lg:hidden bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
                 <h1 className="text-2xl font-bold text-slate-900 mb-2">{property.title}</h1>
                 <p className="text-2xl font-bold text-emerald-600 mb-4">
-                  ${property.price.toLocaleString('ru-RU')}
+                  ${property.price}
                 </p>
                 <div className="flex items-center gap-4 text-slate-600">
                 <span className="flex items-center gap-1">

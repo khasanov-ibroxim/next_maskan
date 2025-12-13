@@ -20,7 +20,9 @@ __turbopack_context__.n(__turbopack_context__.i("[project]/app/[lang]/loading.ts
 "[project]/lib/api.ts [app-rsc] (ecmascript)", ((__turbopack_context__) => {
 "use strict";
 
-// lib/api.ts - Optimized with caching and request deduplication
+// ============================================
+// lib/api.ts - OPTIMIZED VERSION
+// ============================================
 __turbopack_context__.s([
     "clearCache",
     ()=>clearCache,
@@ -37,28 +39,28 @@ __turbopack_context__.s([
     "getStats",
     ()=>getStats
 ]);
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://194.163.140.30:5000';
-// ✅ In-memory cache for reducing duplicate requests
+const API_BASE_URL = ("TURBOPACK compile-time value", "http://194.163.140.30:5000") || 'http://194.163.140.30:5000';
+// ✅ Cache for reducing duplicate requests
 const cache = new Map();
 const CACHE_TTL = 60 * 1000; // 60 seconds
 // ✅ Pending requests map for deduplication
 const pendingRequests = new Map();
 /**
- * Generic fetch with caching and deduplication
+ * ✅ Generic fetch with caching and deduplication
  */ async function cachedFetch(url, options = {}, cacheTTL = CACHE_TTL) {
     const cacheKey = `${url}_${JSON.stringify(options)}`;
-    // ✅ Check cache
+    // Check cache
     const cached = cache.get(cacheKey);
     if (cached && Date.now() - cached.timestamp < cacheTTL) {
         console.log('💾 Using cached data for:', url);
         return cached.data;
     }
-    // ✅ Check if request is already pending (deduplication)
+    // Check if request is already pending
     if (pendingRequests.has(cacheKey)) {
         console.log('🔄 Reusing pending request for:', url);
         return pendingRequests.get(cacheKey);
     }
-    // ✅ Make new request
+    // Make new request
     const requestPromise = (async ()=>{
         try {
             console.log('🌐 Fetching:', url);
@@ -73,7 +75,7 @@ const pendingRequests = new Map();
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
             const data = await response.json();
-            // ✅ Cache the result
+            // Cache the result
             cache.set(cacheKey, {
                 data,
                 timestamp: Date.now()
@@ -83,11 +85,9 @@ const pendingRequests = new Map();
             console.error('❌ Fetch error:', error);
             throw error;
         } finally{
-            // ✅ Remove from pending
             pendingRequests.delete(cacheKey);
         }
     })();
-    // ✅ Add to pending
     pendingRequests.set(cacheKey, requestPromise);
     return requestPromise;
 }
@@ -186,13 +186,11 @@ async function getStats() {
 }
 async function getPropertyImages(folderUrl) {
     try {
-        // ✅ Use cached fetch with longer TTL for images
         const html = await cachedFetch(folderUrl, {
             next: {
                 revalidate: 600
             }
-        }, 600 * 1000 // 10 minutes cache
-        );
+        }, 600 * 1000);
         if (typeof html !== 'string') {
             throw new Error('Invalid response format');
         }
@@ -232,6 +230,127 @@ function clearCache() {
     pendingRequests.clear();
     console.log('🗑️ Cache cleared');
 }
+// ============================================
+// next.config.js - OPTIMIZED
+// ============================================
+/** @type {import('next').NextConfig} */ const nextConfig = {
+    // ✅ Image optimization
+    images: {
+        remotePatterns: [
+            {
+                protocol: 'http',
+                hostname: '194.163.140.30',
+                port: '5000',
+                pathname: '/browse/**'
+            },
+            {
+                protocol: 'https',
+                hostname: 'maskanlux.uz',
+                pathname: '/**'
+            },
+            {
+                protocol: 'https',
+                hostname: 'images.unsplash.com',
+                pathname: '/**'
+            }
+        ],
+        formats: [
+            'image/avif',
+            'image/webp'
+        ],
+        deviceSizes: [
+            640,
+            750,
+            828,
+            1080,
+            1200,
+            1920
+        ],
+        imageSizes: [
+            16,
+            32,
+            48,
+            64,
+            96,
+            128,
+            256
+        ],
+        minimumCacheTTL: 60,
+        dangerouslyAllowSVG: true,
+        contentSecurityPolicy: "default-src 'self'; script-src 'none'; sandbox;"
+    },
+    // ✅ Production optimizations
+    compress: true,
+    poweredByHeader: false,
+    reactStrictMode: true,
+    // ✅ Experimental features
+    experimental: {
+        optimizePackageImports: [
+            'lucide-react'
+        ]
+    },
+    // ✅ Headers for security and caching
+    async headers () {
+        return [
+            {
+                source: '/:path*',
+                headers: [
+                    {
+                        key: 'X-DNS-Prefetch-Control',
+                        value: 'on'
+                    },
+                    {
+                        key: 'X-Content-Type-Options',
+                        value: 'nosniff'
+                    },
+                    {
+                        key: 'X-Frame-Options',
+                        value: 'SAMEORIGIN'
+                    },
+                    {
+                        key: 'X-XSS-Protection',
+                        value: '1; mode=block'
+                    },
+                    {
+                        key: 'Referrer-Policy',
+                        value: 'origin-when-cross-origin'
+                    }
+                ]
+            },
+            // Cache static assets
+            {
+                source: '/static/:path*',
+                headers: [
+                    {
+                        key: 'Cache-Control',
+                        value: 'public, max-age=31536000, immutable'
+                    }
+                ]
+            },
+            // Cache images
+            {
+                source: '/_next/image/:path*',
+                headers: [
+                    {
+                        key: 'Cache-Control',
+                        value: 'public, max-age=31536000, immutable'
+                    }
+                ]
+            }
+        ];
+    },
+    // ✅ Redirects
+    async redirects () {
+        return [
+            {
+                source: '/',
+                destination: '/uz',
+                permanent: false
+            }
+        ];
+    }
+};
+module.exports = nextConfig;
 }),
 "[project]/components/PropertyCard.tsx [app-rsc] (client reference proxy) <module evaluation>", ((__turbopack_context__) => {
 "use strict";
@@ -369,7 +488,7 @@ var __TURBOPACK__imported__module__$5b$project$5d2f$lib$2f$dictionary$2e$ts__$5b
 async function generateMetadata({ params, searchParams }) {
     const { lang } = await params;
     const sp = await searchParams;
-    const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://maskanlux.uz';
+    const baseUrl = ("TURBOPACK compile-time value", "https://maskanlux.uz") || 'https://maskanlux.uz';
     const canonicalUrl = `${baseUrl}/${lang}`;
     // Build title based on filters
     let title = 'Maskan Lux - Ko\'chmas Mulk Toshkentda';
@@ -463,7 +582,7 @@ async function Home({ params, searchParams }) {
                 item: {
                     '@type': 'RealEstateListing',
                     name: property.title,
-                    url: `${process.env.NEXT_PUBLIC_SITE_URL}/${lang}/object/${property.id}`,
+                    url: `${"TURBOPACK compile-time value", "https://maskanlux.uz"}/${lang}/object/${property.id}`,
                     offers: {
                         '@type': 'Offer',
                         price: property.price,

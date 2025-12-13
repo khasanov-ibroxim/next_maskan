@@ -434,20 +434,21 @@ var __TURBOPACK__imported__module__$5b$project$5d2f$constants$2e$ts__$5b$app$2d$
 ;
 ;
 ;
-const PropertySidebar = ({ title, district, location, price, dict })=>{
+const PropertySidebar = ({ title, district, location, price, rieltor = 'Maskan Lux Agent', dict })=>{
     const [isFavorite, setIsFavorite] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])(false);
     const handleShare = ()=>{
         if (typeof navigator !== 'undefined' && navigator.share) {
             navigator.share({
                 title: title,
-                text: `Maskan Lux: ${title} - ${price.toLocaleString('ru-RU')}$`,
+                text: `Maskan Lux: ${title} - ${price.toLocaleString('ru-RU')} y.e.`,
                 url: window.location.href
             }).catch(console.error);
         } else {
-            // Fallback or toast could go here
             alert("Link copied to clipboard (simulated)");
         }
     };
+    // ✅ Format price with spaces
+    const formattedPrice = price > 0 ? price.toLocaleString('ru-RU') : 'Kelishiladi';
     return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
         className: "sticky top-24 space-y-4",
         children: [
@@ -459,8 +460,8 @@ const PropertySidebar = ({ title, district, location, price, dict })=>{
                         children: title
                     }, void 0, false, {
                         fileName: "[project]/components/PropertySidebar.tsx",
-                        lineNumber: 35,
-                        columnNumber: 9
+                        lineNumber: 47,
+                        columnNumber: 17
                     }, ("TURBOPACK compile-time value", void 0)),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
                         className: "text-sm text-slate-500 mb-4 hidden lg:block",
@@ -471,36 +472,52 @@ const PropertySidebar = ({ title, district, location, price, dict })=>{
                         ]
                     }, void 0, true, {
                         fileName: "[project]/components/PropertySidebar.tsx",
-                        lineNumber: 36,
-                        columnNumber: 9
+                        lineNumber: 48,
+                        columnNumber: 17
                     }, ("TURBOPACK compile-time value", void 0)),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                         className: "mb-6",
                         children: [
-                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
-                                className: "text-3xl font-bold text-emerald-600",
+                            price > 0 ? /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Fragment"], {
                                 children: [
-                                    "$",
-                                    price.toLocaleString('ru-RU')
+                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
+                                        className: "text-3xl font-bold text-emerald-600",
+                                        children: formattedPrice
+                                    }, void 0, false, {
+                                        fileName: "[project]/components/PropertySidebar.tsx",
+                                        lineNumber: 53,
+                                        columnNumber: 15
+                                    }, ("TURBOPACK compile-time value", void 0)),
+                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
+                                        className: "text-slate-600 text-lg ml-2",
+                                        children: "y.e."
+                                    }, void 0, false, {
+                                        fileName: "[project]/components/PropertySidebar.tsx",
+                                        lineNumber: 56,
+                                        columnNumber: 29
+                                    }, ("TURBOPACK compile-time value", void 0))
                                 ]
-                            }, void 0, true, {
-                                fileName: "[project]/components/PropertySidebar.tsx",
-                                lineNumber: 39,
-                                columnNumber: 11
-                            }, ("TURBOPACK compile-time value", void 0)),
-                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
-                                className: "text-slate-400 text-sm ml-2",
-                                children: dict.details.start_price
+                            }, void 0, true) : /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
+                                className: "text-3xl font-bold text-emerald-600",
+                                children: "Kelishiladi"
                             }, void 0, false, {
                                 fileName: "[project]/components/PropertySidebar.tsx",
-                                lineNumber: 42,
-                                columnNumber: 11
+                                lineNumber: 59,
+                                columnNumber: 25
+                            }, ("TURBOPACK compile-time value", void 0)),
+                            /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                className: "text-slate-400 text-sm mt-1",
+                                children: dict.details.start_price || 'Boshlang\'ich narx'
+                            }, void 0, false, {
+                                fileName: "[project]/components/PropertySidebar.tsx",
+                                lineNumber: 63,
+                                columnNumber: 21
                             }, ("TURBOPACK compile-time value", void 0))
                         ]
                     }, void 0, true, {
                         fileName: "[project]/components/PropertySidebar.tsx",
-                        lineNumber: 38,
-                        columnNumber: 9
+                        lineNumber: 50,
+                        columnNumber: 17
                     }, ("TURBOPACK compile-time value", void 0)),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                         className: "space-y-3",
@@ -516,15 +533,15 @@ const PropertySidebar = ({ title, district, location, price, dict })=>{
                                         size: 20
                                     }, void 0, false, {
                                         fileName: "[project]/components/PropertySidebar.tsx",
-                                        lineNumber: 53,
-                                        columnNumber: 13
+                                        lineNumber: 76,
+                                        columnNumber: 25
                                     }, ("TURBOPACK compile-time value", void 0)),
                                     __TURBOPACK__imported__module__$5b$project$5d2f$constants$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["CONTACT_PHONE"]
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/components/PropertySidebar.tsx",
-                                lineNumber: 46,
-                                columnNumber: 11
+                                lineNumber: 69,
+                                columnNumber: 21
                             }, ("TURBOPACK compile-time value", void 0)),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$Button$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Button"], {
                                 variant: "outline",
@@ -537,15 +554,15 @@ const PropertySidebar = ({ title, district, location, price, dict })=>{
                                         className: `mr-2 ${isFavorite ? 'fill-current' : ''}`
                                     }, void 0, false, {
                                         fileName: "[project]/components/PropertySidebar.tsx",
-                                        lineNumber: 63,
-                                        columnNumber: 13
+                                        lineNumber: 86,
+                                        columnNumber: 25
                                     }, ("TURBOPACK compile-time value", void 0)),
                                     isFavorite ? dict.details.saved : dict.details.save
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/components/PropertySidebar.tsx",
-                                lineNumber: 57,
-                                columnNumber: 11
+                                lineNumber: 80,
+                                columnNumber: 21
                             }, ("TURBOPACK compile-time value", void 0)),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$Button$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Button"], {
                                 variant: "ghost",
@@ -557,80 +574,81 @@ const PropertySidebar = ({ title, district, location, price, dict })=>{
                                         className: "mr-2"
                                     }, void 0, false, {
                                         fileName: "[project]/components/PropertySidebar.tsx",
-                                        lineNumber: 68,
-                                        columnNumber: 13
+                                        lineNumber: 91,
+                                        columnNumber: 25
                                     }, ("TURBOPACK compile-time value", void 0)),
                                     dict.details.share
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/components/PropertySidebar.tsx",
-                                lineNumber: 67,
-                                columnNumber: 11
+                                lineNumber: 90,
+                                columnNumber: 21
                             }, ("TURBOPACK compile-time value", void 0))
                         ]
                     }, void 0, true, {
                         fileName: "[project]/components/PropertySidebar.tsx",
-                        lineNumber: 45,
-                        columnNumber: 9
+                        lineNumber: 68,
+                        columnNumber: 17
                     }, ("TURBOPACK compile-time value", void 0))
                 ]
             }, void 0, true, {
                 fileName: "[project]/components/PropertySidebar.tsx",
-                lineNumber: 34,
-                columnNumber: 7
+                lineNumber: 46,
+                columnNumber: 13
             }, ("TURBOPACK compile-time value", void 0)),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                 className: "bg-white p-6 rounded-2xl shadow-sm border border-slate-100 flex items-center gap-4",
                 children: [
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                        className: "w-12 h-12 bg-slate-100 rounded-full flex items-center justify-center",
+                        className: "w-12 h-12 bg-emerald-100 rounded-full flex items-center justify-center",
                         children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$user$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__$3c$export__default__as__User$3e$__["User"], {
-                            className: "text-slate-500"
+                            className: "text-emerald-600",
+                            size: 24
                         }, void 0, false, {
                             fileName: "[project]/components/PropertySidebar.tsx",
-                            lineNumber: 76,
-                            columnNumber: 11
+                            lineNumber: 100,
+                            columnNumber: 21
                         }, ("TURBOPACK compile-time value", void 0))
                     }, void 0, false, {
                         fileName: "[project]/components/PropertySidebar.tsx",
-                        lineNumber: 75,
-                        columnNumber: 9
+                        lineNumber: 99,
+                        columnNumber: 17
                     }, ("TURBOPACK compile-time value", void 0)),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                         children: [
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
                                 className: "text-sm text-slate-500",
-                                children: dict.details.realtor
+                                children: dict.details.rieltor || 'Rieltor'
                             }, void 0, false, {
                                 fileName: "[project]/components/PropertySidebar.tsx",
-                                lineNumber: 79,
-                                columnNumber: 11
+                                lineNumber: 103,
+                                columnNumber: 21
                             }, ("TURBOPACK compile-time value", void 0)),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
                                 className: "font-bold text-slate-900",
-                                children: dict.details.agent
+                                children: rieltor
                             }, void 0, false, {
                                 fileName: "[project]/components/PropertySidebar.tsx",
-                                lineNumber: 80,
-                                columnNumber: 11
+                                lineNumber: 104,
+                                columnNumber: 21
                             }, ("TURBOPACK compile-time value", void 0))
                         ]
                     }, void 0, true, {
                         fileName: "[project]/components/PropertySidebar.tsx",
-                        lineNumber: 78,
-                        columnNumber: 9
+                        lineNumber: 102,
+                        columnNumber: 17
                     }, ("TURBOPACK compile-time value", void 0))
                 ]
             }, void 0, true, {
                 fileName: "[project]/components/PropertySidebar.tsx",
-                lineNumber: 74,
-                columnNumber: 7
+                lineNumber: 98,
+                columnNumber: 13
             }, ("TURBOPACK compile-time value", void 0))
         ]
     }, void 0, true, {
         fileName: "[project]/components/PropertySidebar.tsx",
-        lineNumber: 33,
-        columnNumber: 5
+        lineNumber: 45,
+        columnNumber: 9
     }, ("TURBOPACK compile-time value", void 0));
 };
 }),
