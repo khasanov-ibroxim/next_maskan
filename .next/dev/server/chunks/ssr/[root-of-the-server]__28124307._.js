@@ -20,96 +20,156 @@ __turbopack_context__.n(__turbopack_context__.i("[project]/app/[lang]/loading.ts
 "[project]/lib/api.ts [app-rsc] (ecmascript)", ((__turbopack_context__) => {
 "use strict";
 
-// lib/api.ts - SIMPLIFIED
+// lib/api.ts - FIXED VERSION
+// @ts-ignore
 __turbopack_context__.s([
+    "checkBackendHealth",
+    ()=>checkBackendHealth,
     "formatDate",
     ()=>formatDate,
+    "formatPrice",
+    ()=>formatPrice,
+    "getLocations",
+    ()=>getLocations,
     "getProperties",
     ()=>getProperties,
     "getPropertyById",
     ()=>getPropertyById
 ]);
-const API_BASE_URL = ("TURBOPACK compile-time value", "http://194.163.140.30:5000") || 'http://194.163.140.30:5000';
-async function getProperties(params) {
+const API_BASE = ("TURBOPACK compile-time value", "http://194.163.140.30:5000") || 'http://194.163.140.30:5000';
+const API_URL = `${API_BASE}/api/public`;
+async function getProperties(filters) {
     try {
-        const queryParams = new URLSearchParams();
-        queryParams.append('lang', params.lang);
-        if (params.rooms) queryParams.append('rooms', params.rooms);
-        if (params.location) queryParams.append('location', params.location);
-        if (params.type) queryParams.append('type', params.type);
-        const url = `${API_BASE_URL}/api/public/properties?${queryParams.toString()}`;
-        console.log('🌐 Fetching properties:', url);
+        console.log('📥 Fetching properties:', filters);
+        const params = new URLSearchParams({
+            lang: filters.lang
+        });
+        if (filters.rooms) params.append('rooms', filters.rooms);
+        if (filters.location) params.append('location', filters.location);
+        if (filters.type) params.append('type', filters.type);
+        const url = `${API_URL}/properties?${params.toString()}`;
+        console.log('  URL:', url);
         const response = await fetch(url, {
-            method: 'GET',
+            cache: 'no-store',
             headers: {
                 'Content-Type': 'application/json'
-            },
-            next: {
-                revalidate: 60
             }
         });
         if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
+            throw new Error(`API Error: ${response.status}`);
         }
         const result = await response.json();
-        if (!result.success || !result.data) {
-            throw new Error(result.error || 'Failed to fetch properties');
+        console.log('✅ Received:', result.count, 'properties');
+        if (!result.success) {
+            throw new Error(result.error || 'Unknown error');
         }
-        console.log(`✅ Fetched ${result.count} properties`);
-        return result.data;
+        // ✅ Validate data
+        const properties = (result.data || []).map((prop)=>({
+                ...prop,
+                // ✅ Ensure images is array
+                images: Array.isArray(prop.images) ? prop.images : [],
+                // ✅ Ensure mainImage exists
+                mainImage: prop.mainImage || prop.images && prop.images[0] || null,
+                // ✅ Ensure price is number
+                price: typeof prop.price === 'number' ? prop.price : parseFloat(prop.price) || 0
+            }));
+        console.log('  Sample property:', {
+            id: properties[0]?.id,
+            price: properties[0]?.price,
+            images: properties[0]?.images?.length,
+            mainImage: properties[0]?.mainImage ? '✅' : '❌'
+        });
+        return properties;
     } catch (error) {
-        console.error('❌ Error fetching properties:', error);
+        console.error('❌ getProperties error:', error);
         return [];
     }
 }
 async function getPropertyById(id, lang) {
     try {
-        const url = `${API_BASE_URL}/api/public/properties/${id}?lang=${lang}`;
-        console.log('🌐 Fetching property:', url);
+        console.log(`📥 Fetching property: ${id}`);
+        const url = `${API_URL}/properties/${id}?lang=${lang}`;
+        console.log('  URL:', url);
         const response = await fetch(url, {
-            method: 'GET',
+            cache: 'no-store',
             headers: {
                 'Content-Type': 'application/json'
-            },
-            next: {
-                revalidate: 60
             }
         });
         if (!response.ok) {
-            if (response.status === 404) {
-                return null;
-            }
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        const result = await response.json();
-        if (!result.success || !result.data) {
+            console.error('  ❌ Response not ok:', response.status);
             return null;
         }
-        console.log('✅ Fetched property:', result.data.id);
-        console.log('  Images:', result.data.images?.length || 0);
-        console.log('  Rieltor:', result.data.rieltor);
-        return result.data;
+        const result = await response.json();
+        if (!result.success) {
+            console.error('  ❌ API error:', result.error);
+            return null;
+        }
+        const prop = result.data;
+        // ✅ Validate and fix data
+        const property = {
+            ...prop,
+            // ✅ Ensure images is array
+            images: Array.isArray(prop.images) ? prop.images : [],
+            // ✅ Ensure mainImage exists
+            mainImage: prop.mainImage || prop.images && prop.images[0] || null,
+            // ✅ Ensure price is number
+            price: typeof prop.price === 'number' ? prop.price : parseFloat(prop.price) || 0
+        };
+        console.log('✅ Property loaded:', {
+            id: property.id,
+            price: property.price,
+            images: property.images.length,
+            mainImage: property.mainImage ? '✅' : '❌'
+        });
+        return property;
     } catch (error) {
-        console.error('❌ Error fetching property:', error);
+        console.error('❌ getPropertyById error:', error);
         return null;
     }
 }
-function formatDate(dateString, lang) {
+async function getLocations() {
+    try {
+        const response = await fetch(`${API_URL}/locations`, {
+            cache: 'no-store'
+        });
+        if (!response.ok) {
+            throw new Error(`API Error: ${response.status}`);
+        }
+        const result = await response.json();
+        return result.success ? result.data : [];
+    } catch (error) {
+        console.error('❌ getLocations error:', error);
+        return [];
+    }
+}
+function formatDate(dateString, locale) {
     try {
         const date = new Date(dateString);
-        const locales = {
-            'uz': 'uz-UZ',
-            'ru': 'ru-RU',
-            'en': 'en-US',
-            'uz-cy': 'uz-UZ'
-        };
-        return date.toLocaleDateString(locales[lang], {
+        const options = {
             year: 'numeric',
             month: 'long',
             day: 'numeric'
-        });
+        };
+        return date.toLocaleDateString(locale === 'uz' ? 'uz-UZ' : 'ru-RU', options);
     } catch  {
         return dateString;
+    }
+}
+function formatPrice(price) {
+    if (!price || isNaN(price)) return '0';
+    // Convert to string and add spaces every 3 digits
+    return price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
+}
+async function checkBackendHealth() {
+    try {
+        const response = await fetch(`${API_BASE}/api/health`, {
+            cache: 'no-store',
+            signal: AbortSignal.timeout(5000)
+        });
+        return response.ok;
+    } catch  {
+        return false;
     }
 }
 }),
@@ -321,19 +381,11 @@ async function Home({ params, searchParams }) {
     });
     console.log(properties);
     // Group by rooms
-    const propertiesByRooms = [
-        1,
-        2,
-        3,
-        4,
-        5
-    ].map((roomCount)=>{
-        const props = properties.filter((p)=>roomCount === 5 ? p.rooms >= 5 : p.rooms === roomCount);
-        return {
-            roomCount,
-            props
-        };
-    }).filter((group)=>group.props.length > 0);
+    properties.sort((a, b)=>{
+        const dateA = new Date(a.createdAt).getTime();
+        const dateB = new Date(b.createdAt).getTime();
+        return dateB - dateA; // Newest first (descending)
+    });
     // ✅ JSON-LD for ItemList
     const itemListJsonLd = {
         '@context': 'https://schema.org',
@@ -362,7 +414,7 @@ async function Home({ params, searchParams }) {
                 }
             }, void 0, false, {
                 fileName: "[project]/app/[lang]/page.tsx",
-                lineNumber: 131,
+                lineNumber: 130,
                 columnNumber: 9
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$HeroSection$2e$tsx__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["HeroSection"], {
@@ -371,7 +423,7 @@ async function Home({ params, searchParams }) {
                 dict: dict
             }, void 0, false, {
                 fileName: "[project]/app/[lang]/page.tsx",
-                lineNumber: 136,
+                lineNumber: 135,
                 columnNumber: 9
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -385,7 +437,7 @@ async function Home({ params, searchParams }) {
                                 className: "mx-auto mb-4 opacity-20"
                             }, void 0, false, {
                                 fileName: "[project]/app/[lang]/page.tsx",
-                                lineNumber: 142,
+                                lineNumber: 141,
                                 columnNumber: 17
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -393,7 +445,7 @@ async function Home({ params, searchParams }) {
                                 children: dict.home.no_results
                             }, void 0, false, {
                                 fileName: "[project]/app/[lang]/page.tsx",
-                                lineNumber: 143,
+                                lineNumber: 142,
                                 columnNumber: 17
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$client$2f$app$2d$dir$2f$link$2e$react$2d$server$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["default"], {
@@ -402,94 +454,51 @@ async function Home({ params, searchParams }) {
                                 children: dict.home.clear_filter
                             }, void 0, false, {
                                 fileName: "[project]/app/[lang]/page.tsx",
-                                lineNumber: 144,
+                                lineNumber: 143,
                                 columnNumber: 17
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/app/[lang]/page.tsx",
-                        lineNumber: 141,
+                        lineNumber: 140,
                         columnNumber: 15
                     }, this),
-                    propertiesByRooms.map((group)=>/*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])("section", {
-                            className: "container mx-auto px-4",
-                            itemScope: true,
-                            itemType: "https://schema.org/OfferCatalog",
-                            children: [
-                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])("meta", {
-                                    itemProp: "name",
-                                    content: `${group.roomCount} xonali kvartiralar`
-                                }, void 0, false, {
+                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])("section", {
+                        className: "container mx-auto px-4",
+                        itemScope: true,
+                        itemType: "https://schema.org/OfferCatalog",
+                        children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                            className: "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6",
+                            children: properties.map((group)=>/*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$PropertyCard$2e$tsx__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["PropertyCard"], {
+                                    property: group,
+                                    lang: lang,
+                                    dict: dict
+                                }, group.id, false, {
                                     fileName: "[project]/app/[lang]/page.tsx",
-                                    lineNumber: 161,
-                                    columnNumber: 17
-                                }, this),
-                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                    className: "flex items-center justify-between mb-8",
-                                    children: [
-                                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])("h2", {
-                                            className: "text-2xl font-bold text-slate-900 flex items-center",
-                                            children: [
-                                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
-                                                    className: "w-2 h-8 bg-emerald-500 mr-3 rounded-full"
-                                                }, void 0, false, {
-                                                    fileName: "[project]/app/[lang]/page.tsx",
-                                                    lineNumber: 165,
-                                                    columnNumber: 21
-                                                }, this),
-                                                group.roomCount === 5 ? dict.home.rooms_5plus_title : `${group.roomCount} ${dict.home.rooms_title}`
-                                            ]
-                                        }, void 0, true, {
-                                            fileName: "[project]/app/[lang]/page.tsx",
-                                            lineNumber: 164,
-                                            columnNumber: 19
-                                        }, this),
-                                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
-                                            className: "text-slate-500 text-sm"
-                                        }, void 0, false, {
-                                            fileName: "[project]/app/[lang]/page.tsx",
-                                            lineNumber: 171,
-                                            columnNumber: 19
-                                        }, this)
-                                    ]
-                                }, void 0, true, {
-                                    fileName: "[project]/app/[lang]/page.tsx",
-                                    lineNumber: 163,
-                                    columnNumber: 17
-                                }, this),
-                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                    className: "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6",
-                                    children: group.props.map((property)=>/*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$PropertyCard$2e$tsx__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["PropertyCard"], {
-                                            property: property,
-                                            lang: lang,
-                                            dict: dict
-                                        }, property.id, false, {
-                                            fileName: "[project]/app/[lang]/page.tsx",
-                                            lineNumber: 178,
-                                            columnNumber: 23
-                                        }, this))
-                                }, void 0, false, {
-                                    fileName: "[project]/app/[lang]/page.tsx",
-                                    lineNumber: 176,
-                                    columnNumber: 17
-                                }, this)
-                            ]
-                        }, group.roomCount, true, {
+                                    lineNumber: 162,
+                                    columnNumber: 23
+                                }, this))
+                        }, void 0, false, {
                             fileName: "[project]/app/[lang]/page.tsx",
-                            lineNumber: 155,
-                            columnNumber: 15
-                        }, this))
+                            lineNumber: 156,
+                            columnNumber: 13
+                        }, this)
+                    }, void 0, false, {
+                        fileName: "[project]/app/[lang]/page.tsx",
+                        lineNumber: 151,
+                        columnNumber: 11
+                    }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/app/[lang]/page.tsx",
-                lineNumber: 138,
+                lineNumber: 137,
                 columnNumber: 9
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ContactSection$2e$tsx__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["ContactSection"], {
                 dict: dict
             }, void 0, false, {
                 fileName: "[project]/app/[lang]/page.tsx",
-                lineNumber: 190,
+                lineNumber: 175,
                 columnNumber: 9
             }, this)
         ]

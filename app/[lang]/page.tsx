@@ -98,12 +98,11 @@ export default async function Home({ params, searchParams }: HomeProps) {
   });
   console.log(properties)
   // Group by rooms
-  const propertiesByRooms = [1, 2, 3, 4, 5].map(roomCount => {
-    const props = properties.filter(p =>
-        roomCount === 5 ? p.rooms >= 5 : p.rooms === roomCount
-    );
-    return { roomCount, props };
-  }).filter(group => group.props.length > 0);
+  properties.sort((a, b) => {
+    const dateA = new Date(a.createdAt).getTime();
+    const dateB = new Date(b.createdAt).getTime();
+    return dateB - dateA; // Newest first (descending)
+  });
 
   // ✅ JSON-LD for ItemList
   const itemListJsonLd = {
@@ -149,42 +148,28 @@ export default async function Home({ params, searchParams }: HomeProps) {
                 </Link>
               </div>
           )}
-
+          <section
+              className="container mx-auto px-4"
+              itemScope
+              itemType="https://schema.org/OfferCatalog"
+          >
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
           {/* Properties grouped by rooms */}
-          {propertiesByRooms.map((group) => (
-              <section
-                  key={group.roomCount}
-                  className="container mx-auto px-4"
-                  itemScope
-                  itemType="https://schema.org/OfferCatalog"
-              >
-                <meta itemProp="name" content={`${group.roomCount} xonali kvartiralar`} />
+          {properties.map((group) => (
 
-                <div className="flex items-center justify-between mb-8">
-                  <h2 className="text-2xl font-bold text-slate-900 flex items-center">
-                    <span className="w-2 h-8 bg-emerald-500 mr-3 rounded-full"></span>
-                    {group.roomCount === 5
-                        ? dict.home.rooms_5plus_title
-                        : `${group.roomCount} ${dict.home.rooms_title}`
-                    }
-                  </h2>
-                  <span className="text-slate-500 text-sm">
-                {/*{group.props.length} {dict.home.properties || 'ta'}*/}
-              </span>
-                </div>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-                  {group.props.map((property) => (
+
                       <PropertyCard
-                          key={property.id}
-                          property={property}
+                          key={group.id}
+                          property={group}
                           lang={lang}
                           dict={dict}
                       />
-                  ))}
-                </div>
-              </section>
+
+
           ))}
+            </div>
+          </section>
         </div>
 
         <ContactSection dict={dict} />

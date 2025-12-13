@@ -6,6 +6,7 @@ import Image from 'next/image';
 import { Search } from 'lucide-react';
 import { Button } from './ui/Button';
 import { DISTRICTS } from '@/constants';
+import imgBg from "@/public/bg.jpg"
 
 interface HeroProps {
   initialFilters: {
@@ -36,7 +37,7 @@ export const HeroSection = ({ initialFilters, lang, dict }: HeroProps) => {
     <section className="relative h-[600px] flex items-center justify-center">
       <div className="absolute inset-0 z-0">
         <Image 
-          src="https://images.unsplash.com/photo-1600596542815-e328701102b9?auto=format&fit=crop&q=80&w=2000" 
+          src={imgBg}
           alt="Real Estate Background" 
           fill
           className="object-cover"
@@ -84,9 +85,12 @@ export const HeroSection = ({ initialFilters, lang, dict }: HeroProps) => {
                 onChange={(e) => setFilters({...filters, location: e.target.value})}
               >
                 <option value="">{dict.hero.filter.all_locations}</option>
-                {DISTRICTS.map(d => (
-                  <option key={d} value={d}>{d}</option>
+                {Array.from({ length: 20 }, (_, i) => `Yunusobod - ${i}`).map(d => (
+                    <option key={d} value={d}>
+                      {d}
+                    </option>
                 ))}
+                {DISTRICTS.map(d => ( <option key={d} value={d}>{d}</option> ))}
               </select>
             </div>
 

@@ -1,14 +1,9 @@
 import { Property } from './types';
 
 export const DISTRICTS = [
-  "Toshkent sh.",
-  "Chilonzor",
-  "Yunusobod",
-  "Mirzo Ulug'bek",
-  "Yakkasaroy",
-  "Mirobod",
+  "Minor",
   "Shayxontohur",
-  "Sergeli"
+  "Bodomzor"
 ];
 
 // Simplified mock data with multi-language support structures

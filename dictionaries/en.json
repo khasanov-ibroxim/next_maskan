@@ -24,6 +24,7 @@
     "no_results": "Unfortunately, no properties found for your request.",
     "clear_filter": "Clear filter",
     "view_all": "View all",
+    "view": "Viewing",
     "rooms_title": "room apartments",
     "rooms_5plus_title": "5+ room apartments"
   },
@@ -52,6 +53,8 @@
     "rights": "All rights reserved."
   },
   "details": {
+    "balcony": "Balcony",
+    "torets": "Corner apartment",
     "back": "Home",
     "features": "Features",
     "rooms": "Rooms",
@@ -68,10 +71,43 @@
     "start_price": "start",
     "call": "Call",
     "save": "Save",
+    "saved": "Saved",
     "share": "Share",
-    "rieltor": "Realtor",
+    "realtor": "Realtor",
     "agent": "Maskan Lux Agent",
     "not_found": "Property not found",
     "back_home": "Back to Home"
+  },
+  "about_page": {
+    "title": "About Us",
+    "subtitle": "Your trusted partner",
+    "story_title": "Maskan Lux History",
+    "story_desc": "Maskan Lux is one of the leading real estate companies in Tashkent. For over 10 years, we have been helping our clients find their dream homes. Our mission is to make the process of buying and selling homes as easy, transparent, and secure as possible.",
+    "stats": {
+      "years": "Years Experience",
+      "clients": "Happy Clients",
+      "objects": "Properties Sold",
+      "agents": "Professional Agents"
+    },
+    "values": {
+      "title": "Why Choose Us?",
+      "v1_title": "Reliability",
+      "v1_desc": "Every property undergoes a full legal check and is guaranteed.",
+      "v2_title": "Speed",
+      "v2_desc": "We will find the best options for you and process the transaction in the shortest time possible.",
+      "v3_title": "Professionalism",
+      "v3_desc": "Our experienced realtors are always at your service and ready to provide free consultation."
+    }
+  },
+  "contact_page": {
+    "title": "Contact",
+    "subtitle": "Have questions? Email or call us.",
+    "info_title": "Contact Information",
+    "address_label": "Address",
+    "address_value": "Tashkent city, Mirabad district, Oybek street, 12",
+    "phone_label": "Phone",
+    "email_label": "Email",
+    "working_hours_label": "Working Hours",
+    "working_hours_value": "Monday - Saturday: 09:00 - 18:00"
   }
 }

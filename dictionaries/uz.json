@@ -16,7 +16,7 @@
       "rooms_5plus": "5+ xona",
       "location": "Joylashuv",
       "all_locations": "Barcha tumanlar",
-      "price": "Narx ($)",
+      "price": "Narx (y.e.)",
       "search": "Qidirish"
     }
   },
@@ -24,6 +24,7 @@
     "no_results": "Afsuski, so'rovingiz bo'yicha uylar topilmadi.",
     "clear_filter": "Filterni tozalash",
     "view_all": "Barchasini ko'rish",
+    "view": "Ko‘rish",
     "rooms_title": "xonali uylar",
     "rooms_5plus_title": "5+ xonali uylar"
   },
@@ -52,6 +53,8 @@
     "rights": "Barcha huquqlar himoyalangan."
   },
   "details": {
+    "balcony": "Balkon",
+    "torets": "Chekka kvartira",
     "back": "Bosh sahifa",
     "features": "Xususiyatlar",
     "rooms": "Xonalar",
@@ -68,10 +71,43 @@
     "start_price": "start",
     "call": "Qo'ng'iroq",
     "save": "Saqlash",
+    "saved": "Saqlangan",
     "share": "Ulashish",
-    "rieltor": "Rieltor",
+    "realtor": "Rieltor",
     "agent": "Maskan Lux Agenti",
     "not_found": "Obyekt topilmadi",
     "back_home": "Bosh sahifaga qaytish"
+  },
+  "about_page": {
+    "title": "Biz haqimizda",
+    "subtitle": "Sizning ishonchli hamkoringiz",
+    "story_title": "Maskan Lux tarixi",
+    "story_desc": "Maskan Lux - bu Toshkent shahridagi ko'chmas mulk bozorida yetakchi kompaniyalardan biri. Biz 10 yildan ortiq vaqt davomida mijozlarimizga orzuyidagi uyni topishda yordam berib kelmoqdamiz. Bizning vazifamiz — uy sotib olish va sotish jarayonini maksimal darajada oson, shaffof va xavfsiz qilishdir.",
+    "stats": {
+      "years": "Yillik tajriba",
+      "clients": "Mamnun mijozlar",
+      "objects": "Sotilgan mulklar",
+      "agents": "Professional agentlar"
+    },
+    "values": {
+      "title": "Nega aynan biz?",
+      "v1_title": "Ishonchlilik",
+      "v1_desc": "Har bir obyekt yuridik tomondan to'liq tekshirilgan va kafolatlangan.",
+      "v2_title": "Tezkorlik",
+      "v2_desc": "Siz uchun eng mos variantlarni qisqa vaqt ichida topamiz va rasmiylashtiramiz.",
+      "v3_title": "Professionalizm",
+      "v3_desc": "Tajribali rieltorlarimiz har doim xizmatingizda va bepul maslahat berishga tayyor."
+    }
+  },
+  "contact_page": {
+    "title": "Aloqa",
+    "subtitle": "Savollaringiz bormi? Bizga yozing yoki qo'ng'iroq qiling.",
+    "info_title": "Bog'lanish ma'lumotlari",
+    "address_label": "Manzil",
+    "address_value": "Toshkent sh., Mirobod tumani, Oybek ko'chasi, 12-uy",
+    "phone_label": "Telefon",
+    "email_label": "Email",
+    "working_hours_label": "Ish vaqti",
+    "working_hours_value": "Dushanba - Shanba: 09:00 - 18:00"
   }
 }

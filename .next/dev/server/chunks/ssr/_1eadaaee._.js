@@ -51,14 +51,9 @@ __turbopack_context__.s([
     ()=>RAW_PROPERTIES
 ]);
 const DISTRICTS = [
-    "Toshkent sh.",
-    "Chilonzor",
-    "Yunusobod",
-    "Mirzo Ulug'bek",
-    "Yakkasaroy",
-    "Mirobod",
+    "Minor",
     "Shayxontohur",
-    "Sergeli"
+    "Bodomzor"
 ];
 const RAW_PROPERTIES = [
     {

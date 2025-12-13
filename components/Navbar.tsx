@@ -58,7 +58,6 @@ export const Navbar = ({ dict, lang }: NavbarProps) => {
             </Link>
           ))}
           <LanguageSwitcher />
-          <Button size="sm" variant="secondary" onClick={scrollToContact}>{dict.nav.post_ad}</Button>
         </div>
 
         {/* Mobile Actions & Menu Button */}
@@ -87,9 +86,6 @@ export const Navbar = ({ dict, lang }: NavbarProps) => {
               {link.name}
             </Link>
           ))}
-          <Button fullWidth variant="secondary" onClick={scrollToContact}>
-            {dict.nav.post_ad}
-          </Button>
         </div>
       )}
     </nav>

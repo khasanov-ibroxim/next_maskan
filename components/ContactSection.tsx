@@ -10,12 +10,28 @@ interface ContactProps {
 
 export const ContactSection = ({ dict }: ContactProps) => {
   const [status, setStatus] = useState<'idle' | 'success'>('idle');
+  const [form, setForm] = useState({
+    name: '',
+    phone: '',
+    message: ''
+  });
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setStatus('success');
-    setTimeout(() => setStatus('idle'), 3000);
+
+    const res = await fetch('/api/telegram', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(form)
+    });
+
+    if (res.ok) {
+      setStatus('success');
+      setForm({ name: '', phone: '', message: '' });
+      setTimeout(() => setStatus('idle'), 3000);
+    }
   };
+
 
   return (
     <section id="contact" className="py-20 bg-gradient-to-br from-slate-900 to-slate-800 text-white">
@@ -51,15 +67,24 @@ export const ContactSection = ({ dict }: ContactProps) => {
               <div className="space-y-4">
                 <div>
                   <label className="block text-sm font-medium text-slate-700 mb-1">{dict.contact.form.name}</label>
-                  <input required type="text" className="w-full h-10 px-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:outline-none" />
+                  <input required type="text" className="w-full h-10 px-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:outline-none"
+                         onChange={e => setForm({ ...form, name: e.target.value })}
+                         value={form.name}
+                  />
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-slate-700 mb-1">{dict.contact.form.phone}</label>
-                  <input required type="tel" className="w-full h-10 px-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:outline-none" placeholder="+998" />
+                  <input required type="tel" className="w-full h-10 px-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:outline-none" placeholder="+998"
+                         value={form.phone}
+                         onChange={e => setForm({ ...form, phone: e.target.value })}
+                  />
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-slate-700 mb-1">{dict.contact.form.message}</label>
-                  <textarea rows={4} className="w-full p-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:outline-none" placeholder={dict.contact.form.message_placeholder}></textarea>
+                  <textarea rows={4} className="w-full p-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:outline-none" placeholder={dict.contact.form.message_placeholder}
+                            value={form.message}
+                            onChange={e => setForm({ ...form, message: e.target.value })}
+                  ></textarea>
                 </div>
                 <Button type="submit" fullWidth variant="secondary" size="lg">
                   {dict.contact.form.submit}

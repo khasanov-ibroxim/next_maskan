@@ -118,7 +118,6 @@ export default async function PropertyPage({ params }: Props) {
   }
 
 
-  const formattedDate = formatDate(property.createdAt, lang);
   const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://maskanlux.uz';
 
   // ✅ Enhanced JSON-LD structured data
@@ -180,7 +179,7 @@ export default async function PropertyPage({ params }: Props) {
       },
       {
         '@type': 'PropertyValue',
-        name: 'Parking',
+        name: 'Torets',
         value: property.parking,
       },
     ],
@@ -289,8 +288,8 @@ export default async function PropertyPage({ params }: Props) {
                   <DetailItem label={dict.details.renovation} value={property.renovation} />
                   <DetailItem label={dict.details.buildingType} value={property.buildingType} />
                   <DetailItem label={dict.details.location} value={property.district} />
-                  <DetailItem label="Balkon" value={property.balcony} />
-                  <DetailItem label="Parking" value={property.parking} />
+                  <DetailItem label={dict.details.balcony} value={property.balcony} />
+                  <DetailItem label={dict.details.torets} value={property.parking} />
                 </div>
               </div>
 
@@ -304,37 +303,15 @@ export default async function PropertyPage({ params }: Props) {
                 </p>
                 <div className="mt-6 flex items-center gap-4 text-sm text-slate-400 border-t pt-4">
                 <span className="flex items-center gap-1">
-                  <Calendar size={14} /> {formattedDate}
+                  <Calendar size={14} /> {property.createdAt}
                 </span>
                   <span className="flex items-center gap-1">
-                  <Shield size={14} /> {dict.details.verified}
+                  <Shield size={14}  /> {dict.details.verified}
                 </span>
                 </div>
               </div>
 
-              {/* Map */}
-              <div className="bg-white p-6 md:p-8 rounded-2xl shadow-sm border border-slate-100">
-                <h2 className="text-xl font-bold text-slate-900 mb-4 border-l-4 border-emerald-500 pl-3">
-                  {dict.details.map}
-                </h2>
-                <div className="relative w-full h-[300px] bg-slate-100 rounded-xl overflow-hidden flex items-center justify-center border border-slate-200">
-                  <div className="text-center z-10 p-6">
-                    <MapPin className="mx-auto text-emerald-600 mb-3" size={48} />
-                    <p className="font-semibold text-lg mb-1">{property.district}</p>
-                    <p className="text-slate-500 mb-4 text-sm">
-                      {dict.details.open_map || 'Xaritada ko\'rish'}
-                    </p>
-                    <a
-                        href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(property.district + ' Tashkent')}`}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="inline-flex items-center justify-center rounded-lg text-sm font-bold transition-colors focus:outline-none bg-emerald-600 text-white hover:bg-emerald-700 h-10 px-6 shadow-md"
-                    >
-                      Google Maps
-                    </a>
-                  </div>
-                </div>
-              </div>
+
             </div>
 
             {/* Right Column */}
@@ -342,7 +319,7 @@ export default async function PropertyPage({ params }: Props) {
               <PropertySidebar
                   title={property.title}
                   district={property.district}
-                  location={property.district}
+                  floors={`${property.rooms}/${property.floor}/${property.totalFloors}`}
                   price={property.price}
                   rieltor={property.rieltor}
                   dict={dict}

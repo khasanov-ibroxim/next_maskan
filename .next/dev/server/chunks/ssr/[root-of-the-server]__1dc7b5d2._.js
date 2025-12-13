@@ -60,8 +60,8 @@ const metadata = {
         'ijara',
         'real estate',
         'Yunusobod',
-        'Uchtepa',
-        'Chilonzor'
+        'Arenda',
+        'sotiladi'
     ],
     authors: [
         {
@@ -100,7 +100,7 @@ const metadata = {
         siteName: 'Maskan Lux',
         images: [
             {
-                url: '/og-image.png',
+                url: '/bg.png',
                 width: 1200,
                 height: 630,
                 alt: 'Maskan Lux'
@@ -112,7 +112,7 @@ const metadata = {
         title: 'Maskan Lux - Ko\'chmas Mulk Toshkentda',
         description: 'Toshkent shahridagi eng yaxshi ko\'chmas mulk takliflari',
         images: [
-            '/og-image.png'
+            '/bg.png'
         ],
         creator: '@maskanlux'
     },
@@ -164,7 +164,7 @@ function RootLayout({ children }) {
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])("link", {
                         rel: "icon",
-                        href: "/favicon.ico",
+                        href: "/logo.png",
                         sizes: "any"
                     }, void 0, false, {
                         fileName: "[project]/app/layout.tsx",
@@ -173,19 +173,30 @@ function RootLayout({ children }) {
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])("link", {
                         rel: "icon",
-                        href: "/icon.svg",
-                        type: "image/svg+xml"
+                        type: "image/png",
+                        href: "/logo.png",
+                        sizes: "32x32"
                     }, void 0, false, {
                         fileName: "[project]/app/layout.tsx",
                         lineNumber: 114,
                         columnNumber: 13
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])("link", {
-                        rel: "apple-touch-icon",
-                        href: "/apple-touch-icon.png"
+                        rel: "icon",
+                        type: "image/png",
+                        href: "/logo.png",
+                        sizes: "16x16"
                     }, void 0, false, {
                         fileName: "[project]/app/layout.tsx",
                         lineNumber: 115,
+                        columnNumber: 13
+                    }, this),
+                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])("link", {
+                        rel: "apple-touch-icon",
+                        href: "/logo.png"
+                    }, void 0, false, {
+                        fileName: "[project]/app/layout.tsx",
+                        lineNumber: 116,
                         columnNumber: 13
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])("link", {
@@ -193,7 +204,7 @@ function RootLayout({ children }) {
                         href: "/manifest.json"
                     }, void 0, false, {
                         fileName: "[project]/app/layout.tsx",
-                        lineNumber: 118,
+                        lineNumber: 119,
                         columnNumber: 13
                     }, this)
                 ]
@@ -204,6 +215,7 @@ function RootLayout({ children }) {
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])("body", {
                 className: `${__TURBOPACK__imported__module__$5b$next$5d2f$internal$2f$font$2f$google$2f$inter_a21f69b3$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["default"].className} bg-slate-50 min-h-screen antialiased`,
+                suppressHydrationWarning: true,
                 children: [
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])("a", {
                         href: "#main-content",
@@ -211,7 +223,7 @@ function RootLayout({ children }) {
                         children: "Skip to main content"
                     }, void 0, false, {
                         fileName: "[project]/app/layout.tsx",
-                        lineNumber: 122,
+                        lineNumber: 123,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -219,7 +231,7 @@ function RootLayout({ children }) {
                         children: children
                     }, void 0, false, {
                         fileName: "[project]/app/layout.tsx",
-                        lineNumber: 129,
+                        lineNumber: 130,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])("script", {
@@ -233,7 +245,7 @@ function RootLayout({ children }) {
                                 logo: 'https://maskanlux.uz/logo.png',
                                 contactPoint: {
                                     '@type': 'ContactPoint',
-                                    telephone: '+998-90-123-45-67',
+                                    telephone: '+998 97 085 06 04',
                                     contactType: 'Customer Service',
                                     availableLanguage: [
                                         'uz',
@@ -242,8 +254,8 @@ function RootLayout({ children }) {
                                     ]
                                 },
                                 sameAs: [
-                                    'https://t.me/maskanlux',
-                                    'https://instagram.com/maskanlux'
+                                    'https://t.me/Khasanov_ibroxim',
+                                    'https://www.instagram.com/_maskan_lux'
                                 ],
                                 address: {
                                     '@type': 'PostalAddress',
@@ -255,7 +267,7 @@ function RootLayout({ children }) {
                         }
                     }, void 0, false, {
                         fileName: "[project]/app/layout.tsx",
-                        lineNumber: 134,
+                        lineNumber: 135,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])("script", {
@@ -278,13 +290,13 @@ function RootLayout({ children }) {
                         }
                     }, void 0, false, {
                         fileName: "[project]/app/layout.tsx",
-                        lineNumber: 164,
+                        lineNumber: 165,
                         columnNumber: 9
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/app/layout.tsx",
-                lineNumber: 120,
+                lineNumber: 121,
                 columnNumber: 9
             }, this)
         ]

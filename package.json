@@ -9,13 +9,14 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "clsx": "^2.1.0",
+    "framer-motion": "^11.0.8",
+    "lucide-react": "^0.344.0",
+    "next": "16.0.7",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "next": "16.0.7",
-    "lucide-react": "^0.344.0",
-    "framer-motion": "^11.0.8",
+    "rimraf": "^6.1.2",
     "swiper": "^11.0.7",
-    "clsx": "^2.1.0",
     "tailwind-merge": "^2.2.1"
   },
   "devDependencies": {

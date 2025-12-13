@@ -1,26 +1,26 @@
 "use client";
 
-import React, { useState } from 'react';
-import { Phone, Heart, Share2, User } from 'lucide-react';
-import { Button } from './ui/Button';
-import { CONTACT_PHONE } from '@/constants';
+import React, {useState} from 'react';
+import {Phone, Heart, Share2, User} from 'lucide-react';
+import {Button} from './ui/Button';
+import {CONTACT_PHONE} from '@/constants';
 
 interface PropertySidebarProps {
-    title: string;
-    district: string;
-    location: string;
-    price: number;
-    rieltor?: string; // ✅ Added realtor
-    dict: any;
+    title: string,
+    district: string,
+    price: number,
+    rieltor?: string,
+    dict: any,
+    floors?: string
 }
 
 export const PropertySidebar = ({
                                     title,
                                     district,
-                                    location,
                                     price,
-                                    rieltor , // ✅ Default value
-                                    dict
+                                    rieltor,
+                                    dict,
+                                    floors
                                 }: PropertySidebarProps) => {
     const [isFavorite, setIsFavorite] = useState(false);
 
@@ -45,7 +45,7 @@ export const PropertySidebar = ({
         <div className="sticky top-24 space-y-4">
             <div className="bg-white p-6 rounded-2xl shadow-lg border border-slate-100">
                 <h1 className="text-2xl font-bold text-slate-900 mb-1 hidden lg:block">{title}</h1>
-                <p className="text-sm text-slate-500 mb-4 hidden lg:block">{district}, {location}</p>
+                <p className="text-sm text-slate-500 mb-4 hidden lg:block">{district} | {floors}</p>
 
                 <div className="mb-6">
                     {price > 0 ? (
@@ -73,7 +73,7 @@ export const PropertySidebar = ({
                         className="flex items-center justify-center gap-2"
                         onClick={() => window.location.href = `tel:${CONTACT_PHONE}`}
                     >
-                        <Phone size={20} />
+                        <Phone size={20}/>
                         {CONTACT_PHONE}
                     </Button>
 
@@ -83,12 +83,12 @@ export const PropertySidebar = ({
                         onClick={() => setIsFavorite(!isFavorite)}
                         className={isFavorite ? 'text-red-500 border-red-200 bg-red-50' : ''}
                     >
-                        <Heart size={20} className={`mr-2 ${isFavorite ? 'fill-current' : ''}`} />
+                        <Heart size={20} className={`mr-2 ${isFavorite ? 'fill-current' : ''}`}/>
                         {isFavorite ? dict.details.saved : dict.details.save}
                     </Button>
 
                     <Button variant="ghost" fullWidth onClick={handleShare}>
-                        <Share2 size={20} className="mr-2" />
+                        <Share2 size={20} className="mr-2"/>
                         {dict.details.share}
                     </Button>
                 </div>
@@ -97,7 +97,7 @@ export const PropertySidebar = ({
             {/* ✅ Realtor info with actual name */}
             <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 flex items-center gap-4">
                 <div className="w-12 h-12 bg-emerald-100 rounded-full flex items-center justify-center">
-                    <User className="text-emerald-600" size={24} />
+                    <User className="text-emerald-600" size={24}/>
                 </div>
                 <div>
                     <p className="text-sm text-slate-500">{dict.details.rieltor || 'Rieltor'}</p>

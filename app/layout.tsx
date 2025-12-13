@@ -26,8 +26,8 @@ export const metadata: Metadata = {
         'ijara',
         'real estate',
         'Yunusobod',
-        'Uchtepa',
-        'Chilonzor',
+        'Arenda',
+        'sotiladi',
     ],
     authors: [{ name: 'Maskan Lux', url: 'https://maskanlux.uz' }],
     creator: 'Maskan Lux',
@@ -58,7 +58,7 @@ export const metadata: Metadata = {
         siteName: 'Maskan Lux',
         images: [
             {
-                url: '/og-image.png',
+                url: '/bg.png',
                 width: 1200,
                 height: 630,
                 alt: 'Maskan Lux',
@@ -69,7 +69,7 @@ export const metadata: Metadata = {
         card: 'summary_large_image',
         title: 'Maskan Lux - Ko\'chmas Mulk Toshkentda',
         description: 'Toshkent shahridagi eng yaxshi ko\'chmas mulk takliflari',
-        images: ['/og-image.png'],
+        images: ['/bg.png'],
         creator: '@maskanlux',
     },
     verification: {
@@ -110,14 +110,15 @@ export default function RootLayout({
             <link rel="dns-prefetch" href={process.env.NEXT_PUBLIC_API_URL || 'http://194.163.140.30:5000'} />
 
             {/* ✅ Favicon */}
-            <link rel="icon" href="/favicon.ico" sizes="any" />
-            <link rel="icon" href="/icon.svg" type="image/svg+xml" />
-            <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+            <link rel="icon" href="/logo.png" sizes="any" />
+            <link rel="icon" type="image/png" href="/logo.png" sizes="32x32" />
+            <link rel="icon" type="image/png" href="/logo.png" sizes="16x16" />
+            <link rel="apple-touch-icon" href="/logo.png" />
 
             {/* ✅ Manifest for PWA */}
             <link rel="manifest" href="/manifest.json" />
         </head>
-        <body className={`${inter.className} bg-slate-50 min-h-screen antialiased`}>
+        <body className={`${inter.className} bg-slate-50 min-h-screen antialiased`} suppressHydrationWarning>
         {/* ✅ Skip to main content for accessibility */}
         <a
             href="#main-content"
@@ -142,13 +143,13 @@ export default function RootLayout({
                     logo: 'https://maskanlux.uz/logo.png',
                     contactPoint: {
                         '@type': 'ContactPoint',
-                        telephone: '+998-90-123-45-67', // Replace with actual
+                        telephone: '+998 97 085 06 04', // Replace with actual
                         contactType: 'Customer Service',
                         availableLanguage: ['uz', 'ru', 'en'],
                     },
                     sameAs: [
-                        'https://t.me/maskanlux', // Replace with actual
-                        'https://instagram.com/maskanlux', // Replace with actual
+                        'https://t.me/Khasanov_ibroxim', // Replace with actual
+                        'https://www.instagram.com/_maskan_lux', // Replace with actual
                     ],
                     address: {
                         '@type': 'PostalAddress',
