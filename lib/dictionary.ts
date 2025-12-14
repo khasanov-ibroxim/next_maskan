@@ -82,6 +82,8 @@ export const getDictionary = async (locale: Locale) => {
             v2_desc: 'Tez va sifatli xizmat',
             v3_title: 'Professionallik',
             v3_desc: 'Yuqori malakali xodimlar',
+            protect: "Yuridik himoya",
+            sertfc: "Sifat kafolati"
           },
         },
         contact_page: {
