@@ -17,15 +17,31 @@ interface Props {
 function getFullImageUrl(imageUrl: string | undefined, baseUrl: string): string {
   if (!imageUrl) return `${baseUrl}/bg.png`;
 
-  // Agar URL allaqachon to'liq bo'lsa (http:// yoki https:// bilan boshlansa)
+  // Agar URL allaqachon to'liq bo'lsa
   if (imageUrl.startsWith('http://') || imageUrl.startsWith('https://')) {
-    // URL already encoded, return as is
-    return imageUrl;
+    // Bo'sh joylar va maxsus belgilarni encode qilish
+    try {
+      const url = new URL(imageUrl);
+      // pathname'ni to'g'ri encode qilish
+      url.pathname = url.pathname.split('/').map(segment => encodeURIComponent(decodeURIComponent(segment))).join('/');
+      return url.toString();
+    } catch {
+      // Agar URL noto'g'ri bo'lsa, default rasm qaytarish
+      return `${baseUrl}/bg.png`;
+    }
   }
 
   // Agar nisbiy URL bo'lsa, API URL qo'shamiz
   const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://194.163.140.30:5000';
-  return `${apiUrl}${imageUrl.startsWith('/') ? '' : '/'}${imageUrl}`;
+  const fullUrl = `${apiUrl}${imageUrl.startsWith('/') ? '' : '/'}${imageUrl}`;
+
+  try {
+    const url = new URL(fullUrl);
+    url.pathname = url.pathname.split('/').map(segment => encodeURIComponent(decodeURIComponent(segment))).join('/');
+    return url.toString();
+  } catch {
+    return `${baseUrl}/bg.png`;
+  }
 }
 
 // ✅ Generate metadata for SEO
@@ -43,8 +59,14 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://maskanlux.uz';
   const canonicalUrl = `${baseUrl}/${lang}/object/${id}`;
 
-  // ✅ Get full image URL
-  const ogImage = getFullImageUrl(property.mainImage, baseUrl);
+  // ✅ Use proxy for OG image to avoid encoding issues
+  let ogImage = `${baseUrl}/bg.png`;
+
+  if (property.mainImage) {
+    // Encode the full image URL as query parameter
+    const encodedImageUrl = encodeURIComponent(property.mainImage);
+    ogImage = `${baseUrl}/api/og-image?url=${encodedImageUrl}`;
+  }
 
   const title = `${property.rooms || 'N/A'} xona - ${property.district || 'N/A'}, ${property.area || 'N/A'}m² - ${property.price?.toLocaleString() || 'N/A'} | Maskan Lux`;
   const description = property.description ||
@@ -280,7 +302,7 @@ export default async function PropertyPage({ params }: Props) {
                 <h1 className="text-2xl font-bold text-slate-900 mb-2">{property.title}</h1>
                 {property.price && (
                     <p className="text-2xl font-bold text-emerald-600 mb-4">
-                      {property.price.toLocaleString()} y.e.
+                      ${property.price.toLocaleString()}
                     </p>
                 )}
                 <div className="flex items-center gap-4 text-slate-600 flex-wrap">
