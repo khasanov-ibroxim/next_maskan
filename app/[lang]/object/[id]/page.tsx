@@ -280,7 +280,7 @@ export default async function PropertyPage({ params }: Props) {
                 <h1 className="text-2xl font-bold text-slate-900 mb-2">{property.title}</h1>
                 {property.price && (
                     <p className="text-2xl font-bold text-emerald-600 mb-4">
-                      ${property.price.toLocaleString()}
+                      {property.price.toLocaleString()} y.e.
                     </p>
                 )}
                 <div className="flex items-center gap-4 text-slate-600 flex-wrap">
