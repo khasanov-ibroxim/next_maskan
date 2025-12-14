@@ -42,8 +42,12 @@
       "message": "Xabar",
       "message_placeholder": "Men ushbu uy bo'yicha...",
       "submit": "Yuborish",
+      "sending": "Yuborilmoqda...",
       "success_title": "Yuborildi!",
-      "success_desc": "Tez orada siz bilan bog'lanamiz."
+      "error": "Afsus, xatolik yuz berdi. Iltimos, bizga qo‘ng‘iroq qiling.",
+      "success_desc": "Tez orada siz bilan bog'lanamiz.",
+      "send_msg": "Xabar yuborish",
+      "close_form": "Formani yopish"
     }
   },
   "footer": {
@@ -76,13 +80,19 @@
     "realtor": "Rieltor",
     "agent": "Maskan Lux Agenti",
     "not_found": "Obyekt topilmadi",
-    "back_home": "Bosh sahifaga qaytish"
+    "back_home": "Bosh sahifaga qaytish",
+    "check": "Tekshirilgan",
+    "check_dsc": "Barcha ma'lumotlar tasdiqlangan",
+    "privat": "Xavfsiz",
+    "privat_dsc": "Yuridik kafolat",
+    "fast_msg": "Tez javob",
+    "fast_msg_dsc": "24/7 qo‘llab-quvvatlash"
   },
   "about_page": {
     "title": "Biz haqimizda",
     "subtitle": "Sizning ishonchli hamkoringiz",
     "story_title": "Maskan Lux tarixi",
-    "story_desc": "Maskan Lux - bu Toshkent shahridagi ko'chmas mulk bozorida yetakchi kompaniyalardan biri. Biz 10 yildan ortiq vaqt davomida mijozlarimizga orzuyidagi uyni topishda yordam berib kelmoqdamiz. Bizning vazifamiz — uy sotib olish va sotish jarayonini maksimal darajada oson, shaffof va xavfsiz qilishdir.",
+    "story_desc": "Maskan Lux - bu Toshkent shahridagi ko'chmas mulk bozorida yetakchi kompaniyalardan biri. Biz 20 yildan ortiq vaqt davomida mijozlarimizga orzuyidagi uyni topishda yordam berib kelmoqdamiz. Bizning vazifamiz — uy sotib olish va sotish jarayonini maksimal darajada oson, shaffof va xavfsiz qilishdir.",
     "stats": {
       "years": "Yillik tajriba",
       "clients": "Mamnun mijozlar",
@@ -96,7 +106,9 @@
       "v2_title": "Tezkorlik",
       "v2_desc": "Siz uchun eng mos variantlarni qisqa vaqt ichida topamiz va rasmiylashtiramiz.",
       "v3_title": "Professionalizm",
-      "v3_desc": "Tajribali rieltorlarimiz har doim xizmatingizda va bepul maslahat berishga tayyor."
+      "v3_desc": "Tajribali rieltorlarimiz har doim xizmatingizda va bepul maslahat berishga tayyor.",
+      "protect": "Yuridik himoya",
+      "sertfc": "Sifat kafolati"
     }
   },
   "contact_page": {
@@ -104,7 +116,7 @@
     "subtitle": "Savollaringiz bormi? Bizga yozing yoki qo'ng'iroq qiling.",
     "info_title": "Bog'lanish ma'lumotlari",
     "address_label": "Manzil",
-    "address_value": "Toshkent sh., Mirobod tumani, Oybek ko'chasi, 12-uy",
+    "address_value": "Toshkent, Yunusobod tuman, 6‑kvartil, 45",
     "phone_label": "Telefon",
     "email_label": "Email",
     "working_hours_label": "Ish vaqti",

@@ -42,8 +42,12 @@
       "message": "Message",
       "message_placeholder": "I am interested in...",
       "submit": "Send",
+      "sending": "Sending...",
+      "error": "Unfortunately, an error occurred. Please call us.",
       "success_title": "Sent!",
-      "success_desc": "We will contact you soon."
+      "success_desc": "We will contact you soon.",
+      "send_msg": "Send message",
+      "close_form": "Close form"
     }
   },
   "footer": {
@@ -76,7 +80,13 @@
     "realtor": "Realtor",
     "agent": "Maskan Lux Agent",
     "not_found": "Property not found",
-    "back_home": "Back to Home"
+    "back_home": "Back to Home",
+    "check": "Verified",
+    "check_dsc": "All information has been confirmed",
+    "privat": "Secure",
+    "privat_dsc": "Legal guarantee",
+    "fast_msg": "Fast response",
+    "fast_msg_dsc": "24/7 support"
   },
   "about_page": {
     "title": "About Us",
@@ -96,7 +106,9 @@
       "v2_title": "Speed",
       "v2_desc": "We will find the best options for you and process the transaction in the shortest time possible.",
       "v3_title": "Professionalism",
-      "v3_desc": "Our experienced realtors are always at your service and ready to provide free consultation."
+      "v3_desc": "Our experienced realtors are always at your service and ready to provide free consultation.",
+      "protect": "Legal Protection",
+      "sertfc": "Quality Guarantee"
     }
   },
   "contact_page": {
@@ -104,7 +116,7 @@
     "subtitle": "Have questions? Email or call us.",
     "info_title": "Contact Information",
     "address_label": "Address",
-    "address_value": "Tashkent city, Mirabad district, Oybek street, 12",
+    "address_value": "Tashkent, Yunusabad District, 6th Block, 45",
     "phone_label": "Phone",
     "email_label": "Email",
     "working_hours_label": "Working Hours",

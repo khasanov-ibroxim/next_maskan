@@ -179,11 +179,11 @@ export default async function Home({ params, searchParams }: HomeProps) {
                   itemType="https://schema.org/OfferCatalog"
               >
                 {/* Stats */}
-                <div className="mb-8 text-center">
-                  <p className="text-slate-600">
-                    Jami <strong className="text-emerald-600">{properties.length}</strong> ta ob'ekt topildi
-                  </p>
-                </div>
+                {/*<div className="mb-8 text-center">*/}
+                {/*  <p className="text-slate-600">*/}
+                {/*    Jami <strong className="text-emerald-600">{properties.length}</strong> ta ob'ekt topildi*/}
+                {/*  </p>*/}
+                {/*</div>*/}
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
                   {properties.map((property) => (

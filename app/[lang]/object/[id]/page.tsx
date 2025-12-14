@@ -1,4 +1,5 @@
-import { getPropertyById, formatDate } from "@/lib/api";
+// app/[lang]/object/[id]/page.tsx - Fixed version
+import { getPropertyById } from "@/lib/api";
 import { notFound } from "next/navigation";
 import { Metadata } from "next";
 import Link from "next/link";
@@ -16,6 +17,7 @@ interface Props {
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { id, lang } = await params;
   const property = await getPropertyById(id, lang);
+
   if (!property) {
     return {
       title: "Ko'chmas mulk topilmadi | Maskan Lux",
@@ -23,9 +25,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     };
   }
 
-  const title = `${property.rooms} xona - ${property.district}, ${property.area}m² - $${property.price.toLocaleString()} | Maskan Lux`;
+  const title = `${property.rooms || 'N/A'} xona - ${property.district || 'N/A'}, ${property.area || 'N/A'}m² - ${property.price?.toLocaleString() || 'N/A'} | Maskan Lux`;
   const description = property.description ||
-      `${property.rooms} xonali kvartira, ${property.area} m², ${property.floor}/${property.totalFloors} qavat, ${property.district} tumani. Narxi: $${property.price.toLocaleString()}. ${property.renovation}. ${property.buildingType}.`;
+      `${property.rooms || 'N/A'} xonali kvartira, ${property.area || 'N/A'} m², ${property.floor || 'N/A'}/${property.totalFloors || 'N/A'} qavat, ${property.district || 'N/A'} tumani. Narxi: ${property.price?.toLocaleString() || 'N/A'}. ${property.renovation || ''}. ${property.buildingType || ''}.`.trim();
 
   const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://maskanlux.uz';
   const canonicalUrl = `${baseUrl}/${lang}/object/${id}`;
@@ -36,15 +38,15 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     keywords: [
       'kvartira',
       'uy',
-      property.district,
-      `${property.rooms} xona`,
-      property.type,
+      property.district || 'Toshkent',
+      `${property.rooms || 'N/A'} xona`,
+      property.type || 'sotuv',
       'Toshkent',
       'ko\'chmas mulk',
       'maskan',
-      property.renovation,
-      property.buildingType,
-    ].join(', '),
+      property.renovation || '',
+      property.buildingType || '',
+    ].filter(Boolean).join(', '),
     authors: [{ name: 'Maskan Lux' }],
     creator: 'Maskan Lux',
     publisher: 'Maskan Lux',
@@ -72,7 +74,14 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
           height: 630,
           alt: title,
         }
-      ] : [],
+      ] : [
+        {
+          url: `${baseUrl}/bg.png`,
+          width: 1200,
+          height: 630,
+          alt: 'Maskan Lux',
+        }
+      ],
       publishedTime: property.createdAt,
       modifiedTime: property.createdAt,
     },
@@ -80,7 +89,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       card: 'summary_large_image',
       title: title,
       description: description,
-      images: property.mainImage ? [property.mainImage] : [],
+      images: property.mainImage ? [property.mainImage] : [`${baseUrl}/bg.png`],
       creator: '@maskanlux',
     },
     alternates: {
@@ -93,11 +102,11 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       },
     },
     other: {
-      'price:amount': property.price.toString(),
+      'price:amount': property.price?.toString() || '0',
       'price:currency': 'У.Е.',
-      'property:type': property.type,
-      'property:rooms': property.rooms.toString(),
-      'property:area': property.area.toString(),
+      'property:type': property.type || 'N/A',
+      'property:rooms': property.rooms?.toString() || '0',
+      'property:area': property.area?.toString() || '0',
     },
   };
 }
@@ -117,7 +126,6 @@ export default async function PropertyPage({ params }: Props) {
     images.push(property.mainImage);
   }
 
-
   const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://maskanlux.uz';
 
   // ✅ Enhanced JSON-LD structured data
@@ -132,57 +140,53 @@ export default async function PropertyPage({ params }: Props) {
     offers: {
       '@type': 'Offer',
       priceCurrency: 'USD',
-      price: property.price,
+      price: property.price || 0,
       availability: 'https://schema.org/InStock',
-      priceValidUntil: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0], // 30 days
+      priceValidUntil: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
       url: `${baseUrl}/${lang}/object/${id}`,
     },
     address: {
       '@type': 'PostalAddress',
-      addressLocality: property.district,
+      addressLocality: property.district || 'Toshkent',
       addressRegion: 'Toshkent',
       addressCountry: 'UZ',
     },
-    geo: {
-      '@type': 'GeoCoordinates',
-      // Add coordinates if available
-    },
-    numberOfRooms: property.rooms,
+    numberOfRooms: property.rooms || 1,
     floorSize: {
       '@type': 'QuantitativeValue',
-      value: property.area,
-      unitCode: 'MTK', // Square meter
+      value: property.area || 0,
+      unitCode: 'MTK',
     },
-    numberOfBathroomsTotal: 1, // Adjust if you have bathroom count
+    numberOfBathroomsTotal: 1,
     datePublished: property.createdAt,
     dateModified: property.createdAt,
     additionalProperty: [
       {
         '@type': 'PropertyValue',
         name: 'Floor',
-        value: `${property.floor} / ${property.totalFloors}`,
+        value: `${property.floor || 'N/A'} / ${property.totalFloors || 'N/A'}`,
       },
       {
         '@type': 'PropertyValue',
         name: 'Renovation',
-        value: property.renovation,
+        value: property.renovation || 'N/A',
       },
       {
         '@type': 'PropertyValue',
         name: 'Building Type',
-        value: property.buildingType,
+        value: property.buildingType || 'N/A',
       },
       {
         '@type': 'PropertyValue',
         name: 'Balcony',
-        value: property.balcony,
+        value: property.balcony || 'N/A',
       },
       {
         '@type': 'PropertyValue',
-        name: 'Torets',
-        value: property.parking,
+        name: 'Parking',
+        value: property.parking || 'N/A',
       },
-    ],
+    ].filter(prop => prop.value !== 'N/A'),
   };
 
   const breadcrumbJsonLd = {
@@ -260,18 +264,20 @@ export default async function PropertyPage({ params }: Props) {
               {/* Mobile Title */}
               <div className="lg:hidden bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
                 <h1 className="text-2xl font-bold text-slate-900 mb-2">{property.title}</h1>
-                <p className="text-2xl font-bold text-emerald-600 mb-4">
-                  ${property.price}
-                </p>
-                <div className="flex items-center gap-4 text-slate-600">
+                {property.price && (
+                    <p className="text-2xl font-bold text-emerald-600 mb-4">
+                      ${property.price.toLocaleString()}
+                    </p>
+                )}
+                <div className="flex items-center gap-4 text-slate-600 flex-wrap">
                 <span className="flex items-center gap-1">
-                  <Home size={18} /> {property.rooms} xona
+                  <Home size={18} /> {property.rooms || 'N/A'} xona
                 </span>
                   <span className="flex items-center gap-1">
-                  <Maximize size={18} /> {property.area} m²
+                  <Maximize size={18} /> {property.area || 'N/A'} m²
                 </span>
                   <span className="flex items-center gap-1">
-                  <Building2 size={18} /> {property.floor}/{property.totalFloors}
+                  <Building2 size={18} /> {property.floor || 'N/A'}/{property.totalFloors || 'N/A'}
                 </span>
                 </div>
               </div>
@@ -282,14 +288,14 @@ export default async function PropertyPage({ params }: Props) {
                   {dict.details.features}
                 </h2>
                 <div className="grid grid-cols-2 md:grid-cols-3 gap-y-6 gap-x-4">
-                  <DetailItem label={dict.details.rooms} value={`${property.rooms}`} />
-                  <DetailItem label={dict.details.area} value={`${property.area} m²`} />
-                  <DetailItem label={dict.details.floor} value={`${property.floor} / ${property.totalFloors}`} />
-                  <DetailItem label={dict.details.renovation} value={property.renovation} />
-                  <DetailItem label={dict.details.buildingType} value={property.buildingType} />
-                  <DetailItem label={dict.details.location} value={property.district} />
-                  <DetailItem label={dict.details.balcony} value={property.balcony} />
-                  <DetailItem label={dict.details.torets} value={property.parking} />
+                  <DetailItem label={dict.details.rooms} value={property.rooms?.toString() || 'N/A'} />
+                  <DetailItem label={dict.details.area} value={property.area ? `${property.area} m²` : 'N/A'} />
+                  <DetailItem label={dict.details.floor} value={`${property.floor || 'N/A'} / ${property.totalFloors || 'N/A'}`} />
+                  <DetailItem label={dict.details.renovation} value={property.renovation || 'N/A'} />
+                  <DetailItem label={dict.details.buildingType} value={property.buildingType || 'N/A'} />
+                  <DetailItem label={dict.details.location} value={property.district || 'N/A'} />
+                  <DetailItem label={dict.details.balcony} value={property.balcony || 'N/A'} />
+                  <DetailItem label={dict.details.torets} value={property.parking || 'N/A'} />
                 </div>
               </div>
 
@@ -306,22 +312,21 @@ export default async function PropertyPage({ params }: Props) {
                   <Calendar size={14} /> {property.createdAt}
                 </span>
                   <span className="flex items-center gap-1">
-                  <Shield size={14}  /> {dict.details.verified}
+                  <Shield size={14} /> {dict.details.verified}
                 </span>
                 </div>
               </div>
-
-
             </div>
 
             {/* Right Column */}
             <div className="lg:col-span-1">
               <PropertySidebar
-                  title={property.title}
-                  district={property.district}
-                  floors={`${property.rooms}/${property.floor}/${property.totalFloors}`}
+                  title={property.title || 'N/A'}
+                  district={property.district || 'N/A'}
+                  floors={`${property.rooms || 'N/A'}/${property.floor || 'N/A'}/${property.totalFloors || 'N/A'}`}
                   price={property.price}
                   rieltor={property.rieltor}
+                  phone={property.phone}
                   dict={dict}
               />
             </div>
@@ -331,7 +336,7 @@ export default async function PropertyPage({ params }: Props) {
   );
 }
 
-function DetailItem({ label, value }: { label: string, value: string | number }) {
+function DetailItem({ label, value }: { label: string; value: string | number }) {
   return (
       <div>
         <p className="text-sm text-slate-500 mb-1">{label}</p>

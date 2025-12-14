@@ -35,7 +35,7 @@ export default async function AboutPage({ params }: Props) {
   const dict = await getDictionary(lang);
 
   const stats = [
-    { icon: Clock, value: "10+", label: dict.about_page.stats.years },
+    { icon: Clock, value: "20+", label: dict.about_page.stats.years },
     { icon: Smile, value: "1200+", label: dict.about_page.stats.clients },
     { icon: Building, value: "850+", label: dict.about_page.stats.objects },
     { icon: Users, value: "25+", label: dict.about_page.stats.agents },
@@ -71,11 +71,11 @@ export default async function AboutPage({ params }: Props) {
               <div className="flex flex-wrap gap-4 mt-8">
                 <div className="flex items-center gap-2 bg-emerald-50 px-4 py-2 rounded-lg text-emerald-700 font-medium border border-emerald-100">
                   <Shield size={20} />
-                  <span>Yuridik himoya</span>
+                  <span>{dict.about_page.values.protect}</span>
                 </div>
                 <div className="flex items-center gap-2 bg-blue-50 px-4 py-2 rounded-lg text-blue-700 font-medium border border-blue-100">
                   <Award size={20} />
-                  <span>Sifat kafolati</span>
+                  <span>{dict.about_page.values.sertfc}</span>
                 </div>
               </div>
             </div>

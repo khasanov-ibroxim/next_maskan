@@ -7,17 +7,6 @@ import { MapPin, Maximize, Home, Building2, Phone, User } from 'lucide-react';
 
 
 export function PropertyCard({ property, lang, dict }) {
-    // Normalize type (handle both Uzbek and Russian)
-    const getTypeLabel = (type: string) => {
-        if (type === 'Продажа' || type === 'Sotuv') return 'Sotuv';
-        if (type === 'Аренда' || type === 'Arenda') return 'Arenda';
-        return type;
-    };
-
-    const typeLabel = getTypeLabel(property.type);
-    const typeColor = typeLabel === 'Sotuv'
-        ? 'bg-emerald-500 text-white'
-        : 'bg-blue-500 text-white';
 
     return (
         <article
@@ -37,13 +26,13 @@ export function PropertyCard({ property, lang, dict }) {
                 />
 
                 {/* Type Badge */}
-                <div className={`absolute top-3 right-3 px-3 py-1.5 rounded-full text-xs font-bold ${typeColor} shadow-lg`}>
-                    {typeLabel}
+                <div className={`absolute top-3 right-3 px-3 py-1.5 rounded-full text-xs font-bold bg-emerald-500 text-white shadow-lg`}>
+                    {property.type}
                 </div>
 
                 {/* Price Badge */}
-                <div className="absolute bottom-3 left-3 bg-slate-900/90 backdrop-blur-sm text-white px-4 py-2 rounded-xl shadow-lg">
-                    <span className="text-xl font-bold" itemProp="price">${property.price?.toLocaleString() || 'N/A'}</span>
+                <div className="absolute bottom-3 left-3 bg-emerald-500  backdrop-blur-sm text-white px-4 py-2 rounded-xl shadow-lg">
+                    <span className="text-xl font-bold" itemProp="price">{property.price?.toLocaleString() || 'N/A'} y.e.</span>
                 </div>
             </Link>
 
@@ -71,17 +60,17 @@ export function PropertyCard({ property, lang, dict }) {
                 <div className="grid grid-cols-3 gap-3 mb-4 pb-4 border-b border-slate-100">
                     <div className="flex flex-col items-center">
                         <Home size={18} className="text-slate-400 mb-1" />
-                        <span className="text-xs text-slate-500">Xonalar</span>
+                        <span className="text-xs text-slate-500">{dict.details.rooms}</span>
                         <span className="font-semibold text-slate-900">{property.rooms || 'N/A'}</span>
                     </div>
                     <div className="flex flex-col items-center">
                         <Maximize size={18} className="text-slate-400 mb-1" />
-                        <span className="text-xs text-slate-500">Maydon</span>
+                        <span className="text-xs text-slate-500">{dict.details.area}</span>
                         <span className="font-semibold text-slate-900">{property.area || 'N/A'}m²</span>
                     </div>
                     <div className="flex flex-col items-center">
                         <Building2 size={18} className="text-slate-400 mb-1" />
-                        <span className="text-xs text-slate-500">Qavat</span>
+                        <span className="text-xs text-slate-500">{dict.details.floor}</span>
                         <span className="font-semibold text-slate-900">{property.floor || 'N/A'}/{property.totalFloors || 'N/A'}</span>
                     </div>
                 </div>
@@ -90,19 +79,19 @@ export function PropertyCard({ property, lang, dict }) {
                 <div className="space-y-2 mb-4 text-sm">
                     {property.buildingType && (
                         <div className="flex items-center justify-between">
-                            <span className="text-slate-500">Bino turi:</span>
+                            <span className="text-slate-500">{dict.details.buildingType}</span>
                             <span className="font-medium text-slate-700">{property.buildingType}</span>
                         </div>
                     )}
                     {property.renovation && (
                         <div className="flex items-center justify-between">
-                            <span className="text-slate-500">Ta'mir:</span>
+                            <span className="text-slate-500">{dict.details.renovation}</span>
                             <span className="font-medium text-slate-700">{property.renovation}</span>
                         </div>
                     )}
                     {property.balcony && (
                         <div className="flex items-center justify-between">
-                            <span className="text-slate-500">Balkon:</span>
+                            <span className="text-slate-500">{dict.details.balcony}</span>
                             <span className="font-medium text-slate-700">{property.balcony}</span>
                         </div>
                     )}
@@ -118,7 +107,7 @@ export function PropertyCard({ property, lang, dict }) {
                                         <User size={16} className="text-emerald-600" />
                                     </div>
                                     <div className="flex flex-col">
-                                        <span className="text-xs text-slate-500">Rieltor</span>
+                                        <span className="text-xs text-slate-500">{dict.details.realtor}</span>
                                         <span className="text-sm font-medium text-slate-900">
                       {typeof property.rieltor === 'string' ? property.rieltor : property.rieltor.name}
                     </span>
@@ -127,7 +116,7 @@ export function PropertyCard({ property, lang, dict }) {
                             )}
                             {property.phone && (
                                 <a
-                                    href={`tel:${property.phone}`}
+                                    href={`tel:+998970850604`}
                                     className="flex items-center gap-1 text-emerald-600 hover:text-emerald-700 transition-colors"
                                     onClick={(e) => e.stopPropagation()}
                                 >
@@ -143,7 +132,7 @@ export function PropertyCard({ property, lang, dict }) {
                     href={`/${lang}/object/${property.id}`}
                     className="mt-4 w-full bg-emerald-500 hover:bg-emerald-600 text-white py-3 rounded-xl font-medium transition-colors text-center"
                 >
-                    {dict.home?.view_details || 'Batafsil ko\'rish'}
+                    {dict.home?.view || 'Batafsil ko\'rish'}
                 </Link>
             </div>
 

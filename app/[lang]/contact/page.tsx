@@ -1,10 +1,10 @@
-// app/[lang]/contact/page.tsx
+// app/[lang]/contact/page.tsx - Server Component
 import React from 'react';
 import { getDictionary } from '@/lib/dictionary';
 import { Locale } from '@/i18n-config';
-import { MapPin, Phone, Mail, Clock, Send } from 'lucide-react';
+import { MapPin, Phone, Mail, Clock } from 'lucide-react';
 import { CONTACT_PHONE } from '@/constants';
-import { Button } from '@/components/ui/Button';
+import { ContactForm } from '@/components/ContactForm.tsx';
 
 interface Props {
     params: Promise<{ lang: Locale }>;
@@ -94,36 +94,13 @@ export default async function ContactPage({ params }: Props) {
 
                     {/* Form and Map */}
                     <div className="lg:col-span-2 space-y-8 z-0 mt-8 lg:mt-0">
-                        {/* Contact Form */}
-                        <div className="bg-white p-8 rounded-3xl shadow-sm border border-slate-100">
-                            <h3 className="text-xl font-bold text-slate-900 mb-6">{dict.contact.title}</h3>
-                            <form className="space-y-4">
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                    <div>
-                                        <label className="block text-sm font-medium text-slate-700 mb-1">{dict.contact.form.name}</label>
-                                        <input type="text" className="w-full h-12 px-4 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:outline-none" />
-                                    </div>
-                                    <div>
-                                        <label className="block text-sm font-medium text-slate-700 mb-1">{dict.contact.form.phone}</label>
-                                        <input type="tel" className="w-full h-12 px-4 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:outline-none" placeholder="+998" />
-                                    </div>
-                                </div>
-                                <div>
-                                    <label className="block text-sm font-medium text-slate-700 mb-1">{dict.contact.form.message}</label>
-                                    <textarea rows={5} className="w-full p-4 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:outline-none" placeholder={dict.contact.form.message_placeholder}></textarea>
-                                </div>
-                                <div className="flex justify-end">
-                                    <Button size="lg" className="w-full md:w-auto">
-                                        <Send size={18} className="mr-2" /> {dict.contact.form.submit}
-                                    </Button>
-                                </div>
-                            </form>
-                        </div>
+                        {/* Contact Form - Client Component */}
+                        <ContactForm dict={dict} />
 
                         {/* Map */}
                         <div className="bg-white p-2 rounded-3xl shadow-sm border border-slate-100 h-[400px] overflow-hidden">
                             <iframe
-                                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2997.2642674987034!2d69.2796248!3d41.2995958!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x38ae8ad5a7a53609%3A0x6b4c9197c36b4e07!2sOybek%20metro%20station!5e0!3m2!1sen!2s!4v1716300000000!5m2!1sen!2s"
+                                src="https://www.google.com/maps/embed?pb=!1m17!1m12!1m3!1d748.5399929399592!2d69.2640792695981!3d41.370609004638915!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m2!1m1!2zNDHCsDIyJzE0LjIiTiA2OcKwMTUnNTMuMCJF!5e0!3m2!1sru!2s!4v1765701131620!5m2!1sru!2s"
                                 width="100%"
                                 height="100%"
                                 style={{ border: 0, borderRadius: '20px' }}

@@ -1,15 +1,15 @@
-// components/PropertySidebar.tsx - Fixed version with safe checks
+// components/PropertySidebar.tsx - With Share functionality
 'use client';
 
 import { useState } from 'react';
-import { Phone, MessageCircle, User, Mail, Send } from 'lucide-react';
+import { Phone, User, Mail, Send, Share2 } from 'lucide-react';
 import Image from 'next/image';
 
 interface PropertySidebarProps {
     title: string;
     district: string;
     floors: string;
-    price?: number; // ✅ Optional
+    price?: number;
     rieltor?: string | {
         name: string;
         phone: string;
@@ -32,15 +32,42 @@ export function PropertySidebar({
     const [formData, setFormData] = useState({
         name: '',
         phone: '',
-        message: `Salom! Men ${title} ob'ekti haqida ma'lumot olmoqchiman.`,
+        message: `Salom! Men ${district} , ${floors} ob'ekti haqida ma'lumot olmoqchiman. rieltor ${rieltor} ning uyi`,
     });
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [submitStatus, setSubmitStatus] = useState<'idle' | 'success' | 'error'>('idle');
+    const [shareSuccess, setShareSuccess] = useState(false);
 
     // Parse rieltor data
     const rieltorName = typeof rieltor === 'string' ? rieltor : rieltor?.name;
     const rieltorPhone = typeof rieltor === 'object' ? rieltor?.phone : phone;
     const rieltorAvatar = typeof rieltor === 'object' ? rieltor?.avatar : undefined;
+
+    // ✅ Share functionality
+    const handleShare = async () => {
+        const shareData = {
+            title: title,
+            text: `${title}\n📍 ${district}\n${price ? `💰 Narx: $${price.toLocaleString()}` : ''}\n🏢 ${floors}`,
+            url: typeof window !== 'undefined' ? window.location.href : '',
+        };
+
+        try {
+            // Web Share API (mobile & modern browsers)
+            if (navigator.share) {
+                await navigator.share(shareData);
+                setShareSuccess(true);
+                setTimeout(() => setShareSuccess(false), 2000);
+            } else {
+                // Fallback: Copy to clipboard
+                const textToCopy = `${shareData.title}\n${shareData.text}\n\n🔗 ${shareData.url}`;
+                await navigator.clipboard.writeText(textToCopy);
+                setShareSuccess(true);
+                setTimeout(() => setShareSuccess(false), 2000);
+            }
+        } catch (error) {
+            console.error('Share error:', error);
+        }
+    };
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -80,15 +107,15 @@ export function PropertySidebar({
             {/* Desktop Title */}
             <div className="hidden lg:block bg-white p-6 rounded-2xl shadow-sm border border-slate-100 mb-6">
                 <h1 className="text-2xl font-bold text-slate-900 mb-2">{title}</h1>
-                <p className="text-slate-600">{district}</p>
+                <p className="text-slate-600">📍 {district} | 🏢 {floors}</p>
                 {price && (
                     <p className="text-3xl font-bold text-emerald-600 mt-4">
-                        ${price.toLocaleString()}
+                        {price.toLocaleString()} y.e.
                     </p>
                 )}
             </div>
 
-            {/* Contact Card - Original Design */}
+            {/* Contact Card */}
             <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
                 {/* Rieltor Info */}
                 {rieltorName && (
@@ -107,46 +134,48 @@ export function PropertySidebar({
                             )}
                         </div>
                         <div>
-                            <p className="text-sm text-slate-500">Sizning rieltorigiz</p>
+                            <p className="text-sm text-slate-500">{dict.details.realtor}</p>
                             <p className="text-lg font-bold text-slate-900">{rieltorName}</p>
                         </div>
                     </div>
                 )}
 
                 <h3 className="text-xl font-bold text-slate-900 mb-4">
-                    {dict.details?.contact_title || 'Bog\'lanish'}
+                    {dict.contact_page?.title || 'Bog\'lanish'}
                 </h3>
 
-                {/* Contact Buttons - Original Colors */}
+                {/* Contact Buttons */}
                 <div className="space-y-3">
-                    {rieltorPhone && (
-                        <>
-                            <a
-                                href={`tel:${rieltorPhone}`}
-                                className="flex items-center justify-center gap-2 w-full bg-emerald-500 hover:bg-emerald-600 text-white py-3 px-4 rounded-xl font-medium transition-colors shadow-sm"
-                            >
-                                <Phone size={20} />
-                                <span>{rieltorPhone}</span>
-                            </a>
+                    {/* Main Phone - Always visible */}
+                    <a
+                        href="tel:+998970850604"
+                        className="flex items-center justify-center gap-2 w-full bg-emerald-500 hover:bg-emerald-600 text-white py-3 px-4 rounded-xl font-medium transition-colors shadow-sm"
+                    >
+                        <Phone size={20} />
+                        <span>+998 97 085 06 04</span>
+                    </a>
 
-                            <a
-                                href={`https://wa.me/${rieltorPhone.replace(/[^0-9]/g, '')}`}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="flex items-center justify-center gap-2 w-full bg-green-500 hover:bg-green-600 text-white py-3 px-4 rounded-xl font-medium transition-colors shadow-sm"
-                            >
-                                <MessageCircle size={20} />
-                                <span>WhatsApp</span>
-                            </a>
-                        </>
-                    )}
+                    {/* Share Button */}
+                    <button
+                        onClick={handleShare}
+                        className="flex items-center justify-center gap-2 w-full bg-blue-500 hover:bg-blue-600 text-white py-3 px-4 rounded-xl font-medium transition-colors shadow-sm relative"
+                    >
+                        <Share2 size={20} />
+                        <span>{dict.details?.share}</span>
+                        {shareSuccess && (
+                            <span className="absolute -top-2 -right-2 bg-green-500 text-white text-xs px-2 py-1 rounded-full animate-bounce">
+                                ✓
+                            </span>
+                        )}
+                    </button>
 
+                    {/* Show Form Button */}
                     <button
                         onClick={() => setShowForm(!showForm)}
-                        className="flex items-center justify-center gap-2 w-full bg-blue-500 hover:bg-blue-600 text-white py-3 px-4 rounded-xl font-medium transition-colors shadow-sm"
+                        className="flex items-center justify-center gap-2 w-full bg-purple-500 hover:bg-purple-600 text-white py-3 px-4 rounded-xl font-medium transition-colors shadow-sm"
                     >
                         <Mail size={20} />
-                        <span>{showForm ? 'Formani yopish' : 'Xabar yuborish'}</span>
+                        <span>{showForm ? dict.contact?.form.close_form : dict.contact?.form.send_msg}</span>
                     </button>
                 </div>
 
@@ -163,7 +192,7 @@ export function PropertySidebar({
                                 onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                                 required
                                 className="w-full px-4 py-2 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:outline-none"
-                                placeholder="Ismingiz"
+                                placeholder={dict.contact?.form?.name}
                             />
                         </div>
 
@@ -190,7 +219,7 @@ export function PropertySidebar({
                                 onChange={(e) => setFormData({ ...formData, message: e.target.value })}
                                 rows={4}
                                 className="w-full px-4 py-2 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:outline-none"
-                                placeholder="Xabaringiz..."
+                                placeholder={dict.contact?.form?.message}
                             />
                         </div>
 
@@ -202,7 +231,7 @@ export function PropertySidebar({
                             {isSubmitting ? (
                                 <>
                                     <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                                    <span>Yuborilmoqda...</span>
+                                    <span>{dict.contact?.form?.sending}</span>
                                 </>
                             ) : (
                                 <>
@@ -214,13 +243,13 @@ export function PropertySidebar({
 
                         {submitStatus === 'success' && (
                             <div className="bg-green-50 border border-green-200 text-green-800 px-4 py-3 rounded-lg text-sm">
-                                ✅ Xabar muvaffaqiyatli yuborildi!
+                                ✅ {dict.contact?.form?.success_title}  {dict.contact?.form?.success_desc}
                             </div>
                         )}
 
                         {submitStatus === 'error' && (
                             <div className="bg-red-50 border border-red-200 text-red-800 px-4 py-3 rounded-lg text-sm">
-                                ❌ Xatolik yuz berdi. Qaytadan urinib ko'ring.
+                                ❌ {dict.contact?.form?.error} <a href="tel:+998970850604">+998 97 085 06 04</a>
                             </div>
                         )}
                     </form>
@@ -234,7 +263,7 @@ export function PropertySidebar({
                 </div>
             </div>
 
-            {/* Trust Badges - Original Design */}
+            {/* Trust Badges */}
             <div className="mt-6 bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
                 <div className="space-y-3 text-sm text-slate-600">
                     <div className="flex items-center gap-3">
@@ -242,8 +271,8 @@ export function PropertySidebar({
                             <span className="text-emerald-600 text-lg">✓</span>
                         </div>
                         <div>
-                            <p className="font-medium text-slate-900">Tekshirilgan</p>
-                            <p className="text-xs text-slate-500">Barcha ma'lumotlar tasdiklangan</p>
+                            <p className="font-medium text-slate-900">{dict.details.check}</p>
+                            <p className="text-xs text-slate-500">{dict.details.check_dsc}</p>
                         </div>
                     </div>
                     <div className="flex items-center gap-3">
@@ -251,8 +280,8 @@ export function PropertySidebar({
                             <span className="text-blue-600 text-lg">🛡️</span>
                         </div>
                         <div>
-                            <p className="font-medium text-slate-900">Xavfsiz</p>
-                            <p className="text-xs text-slate-500">Yuridik kafolat</p>
+                            <p className="font-medium text-slate-900">{dict.details.privat}</p>
+                            <p className="text-xs text-slate-500">{dict.details.privat_dsc}</p>
                         </div>
                     </div>
                     <div className="flex items-center gap-3">
@@ -260,8 +289,8 @@ export function PropertySidebar({
                             <span className="text-purple-600 text-lg">⚡</span>
                         </div>
                         <div>
-                            <p className="font-medium text-slate-900">Tez javob</p>
-                            <p className="text-xs text-slate-500">24/7 qo'llab-quvvatlash</p>
+                            <p className="font-medium text-slate-900">{dict.details.fast_msg}</p>
+                            <p className="text-xs text-slate-500">{dict.details.fast_msg_dsc}</p>
                         </div>
                     </div>
                 </div>
