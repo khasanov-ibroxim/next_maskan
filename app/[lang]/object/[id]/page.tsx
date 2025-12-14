@@ -13,35 +13,21 @@ interface Props {
   params: Promise<{ id: string; lang: Locale }>;
 }
 
-// ✅ Helper function to get full image URL
-function getFullImageUrl(imageUrl: string | undefined, baseUrl: string): string {
-  if (!imageUrl) return `${baseUrl}/bg.png`;
+// ✅ Helper function to get clean, accessible image URL
+function getOgImageUrl(imageUrl: string | undefined, baseUrl: string): string {
+  if (!imageUrl) {
+    // Default fallback image
+    return 'https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=1200&h=630&fit=crop';
+  }
 
-  // Agar URL allaqachon to'liq bo'lsa
+  // If URL is already full and valid
   if (imageUrl.startsWith('http://') || imageUrl.startsWith('https://')) {
-    // Bo'sh joylar va maxsus belgilarni encode qilish
-    try {
-      const url = new URL(imageUrl);
-      // pathname'ni to'g'ri encode qilish
-      url.pathname = url.pathname.split('/').map(segment => encodeURIComponent(decodeURIComponent(segment))).join('/');
-      return url.toString();
-    } catch {
-      // Agar URL noto'g'ri bo'lsa, default rasm qaytarish
-      return `${baseUrl}/bg.png`;
-    }
+    return imageUrl;
   }
 
-  // Agar nisbiy URL bo'lsa, API URL qo'shamiz
+  // Build full URL from relative path
   const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://194.163.140.30:5000';
-  const fullUrl = `${apiUrl}${imageUrl.startsWith('/') ? '' : '/'}${imageUrl}`;
-
-  try {
-    const url = new URL(fullUrl);
-    url.pathname = url.pathname.split('/').map(segment => encodeURIComponent(decodeURIComponent(segment))).join('/');
-    return url.toString();
-  } catch {
-    return `${baseUrl}/bg.png`;
-  }
+  return `${apiUrl}${imageUrl.startsWith('/') ? '' : '/'}${imageUrl}`;
 }
 
 // ✅ Generate metadata for SEO
@@ -59,14 +45,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://maskanlux.uz';
   const canonicalUrl = `${baseUrl}/${lang}/object/${id}`;
 
-  // ✅ Use proxy for OG image to avoid encoding issues
-  let ogImage = `${baseUrl}/bg.png`;
-
-  if (property.mainImage) {
-    // Encode the full image URL as query parameter
-    const encodedImageUrl = encodeURIComponent(property.mainImage);
-    ogImage = `${baseUrl}/api/og-image?url=${encodedImageUrl}`;
-  }
+  // ✅ Get clean OG image URL - directly use the API URL
+  const ogImage = getOgImageUrl(property.mainImage, baseUrl);
 
   const title = `${property.rooms || 'N/A'} xona - ${property.district || 'N/A'}, ${property.area || 'N/A'}m² - ${property.price?.toLocaleString() || 'N/A'} | Maskan Lux`;
   const description = property.description ||
@@ -162,7 +142,7 @@ export default async function PropertyPage({ params }: Props) {
   const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://maskanlux.uz';
 
   // ✅ Convert all images to full URLs for JSON-LD
-  const fullImageUrls = images.map(img => getFullImageUrl(img, baseUrl));
+  const fullImageUrls = images.map(img => getOgImageUrl(img, baseUrl));
 
   // ✅ Enhanced JSON-LD structured data
   const jsonLd = {
