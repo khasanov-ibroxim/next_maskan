@@ -1,4 +1,4 @@
-// app/[lang]/object/[id]/page.tsx - Fixed version
+// app/[lang]/object/[id]/page.tsx - Fixed image URLs
 import { getPropertyById } from "@/lib/api";
 import { notFound } from "next/navigation";
 import { Metadata } from "next";
@@ -13,6 +13,21 @@ interface Props {
   params: Promise<{ id: string; lang: Locale }>;
 }
 
+// ✅ Helper function to get full image URL
+function getFullImageUrl(imageUrl: string | undefined, baseUrl: string): string {
+  if (!imageUrl) return `${baseUrl}/bg.png`;
+
+  // Agar URL allaqachon to'liq bo'lsa (http:// yoki https:// bilan boshlansa)
+  if (imageUrl.startsWith('http://') || imageUrl.startsWith('https://')) {
+    // URL already encoded, return as is
+    return imageUrl;
+  }
+
+  // Agar nisbiy URL bo'lsa, API URL qo'shamiz
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://194.163.140.30:5000';
+  return `${apiUrl}${imageUrl.startsWith('/') ? '' : '/'}${imageUrl}`;
+}
+
 // ✅ Generate metadata for SEO
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { id, lang } = await params;
@@ -25,12 +40,15 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     };
   }
 
+  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://maskanlux.uz';
+  const canonicalUrl = `${baseUrl}/${lang}/object/${id}`;
+
+  // ✅ Get full image URL
+  const ogImage = getFullImageUrl(property.mainImage, baseUrl);
+
   const title = `${property.rooms || 'N/A'} xona - ${property.district || 'N/A'}, ${property.area || 'N/A'}m² - ${property.price?.toLocaleString() || 'N/A'} | Maskan Lux`;
   const description = property.description ||
       `${property.rooms || 'N/A'} xonali kvartira, ${property.area || 'N/A'} m², ${property.floor || 'N/A'}/${property.totalFloors || 'N/A'} qavat, ${property.district || 'N/A'} tumani. Narxi: ${property.price?.toLocaleString() || 'N/A'}. ${property.renovation || ''}. ${property.buildingType || ''}.`.trim();
-
-  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://maskanlux.uz';
-  const canonicalUrl = `${baseUrl}/${lang}/object/${id}`;
 
   return {
     title: title,
@@ -67,19 +85,12 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       title: title,
       description: description,
       siteName: 'Maskan Lux',
-      images: property.mainImage ? [
+      images: [
         {
-          url: property.mainImage,
+          url: ogImage,
           width: 1200,
           height: 630,
           alt: title,
-        }
-      ] : [
-        {
-          url: `${baseUrl}/bg.png`,
-          width: 1200,
-          height: 630,
-          alt: 'Maskan Lux',
         }
       ],
       publishedTime: property.createdAt,
@@ -89,7 +100,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       card: 'summary_large_image',
       title: title,
       description: description,
-      images: property.mainImage ? [property.mainImage] : [`${baseUrl}/bg.png`],
+      images: [ogImage],
       creator: '@maskanlux',
     },
     alternates: {
@@ -128,6 +139,9 @@ export default async function PropertyPage({ params }: Props) {
 
   const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://maskanlux.uz';
 
+  // ✅ Convert all images to full URLs for JSON-LD
+  const fullImageUrls = images.map(img => getFullImageUrl(img, baseUrl));
+
   // ✅ Enhanced JSON-LD structured data
   const jsonLd = {
     '@context': 'https://schema.org',
@@ -136,7 +150,7 @@ export default async function PropertyPage({ params }: Props) {
     name: property.title,
     description: property.description,
     url: `${baseUrl}/${lang}/object/${id}`,
-    image: images,
+    image: fullImageUrls,
     offers: {
       '@type': 'Offer',
       priceCurrency: 'USD',
