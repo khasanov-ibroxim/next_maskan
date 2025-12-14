@@ -22,11 +22,12 @@ function getOgImageUrl(imageUrl: string | undefined, baseUrl: string): string {
 
   // If URL is already full and valid
   if (imageUrl.startsWith('http://') || imageUrl.startsWith('https://')) {
-    return imageUrl;
+    // Replace HTTP API URL with HTTPS domain
+    return imageUrl.replace('http://194.163.140.30:5000', 'https://api.maskanlux.uz');
   }
 
-  // Build full URL from relative path
-  const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://194.163.140.30:5000';
+  // Build full URL from relative path using HTTPS domain
+  const apiUrl = 'https://api.maskanlux.uz';
   return `${apiUrl}${imageUrl.startsWith('/') ? '' : '/'}${imageUrl}`;
 }
 
