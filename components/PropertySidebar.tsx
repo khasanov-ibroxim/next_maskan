@@ -4,6 +4,7 @@
 import { useState } from 'react';
 import { Phone, User, Mail, Send, Share2 } from 'lucide-react';
 import Image from 'next/image';
+import {formatPrice} from "@/lib/api.ts";
 
 interface PropertySidebarProps {
     title: string;
@@ -110,7 +111,7 @@ export function PropertySidebar({
                 <p className="text-slate-600">📍 {district} | 🏢 {floors}</p>
                 {price && (
                     <p className="text-3xl font-bold text-emerald-600 mt-4">
-                        {price.toLocaleString()} y.e.
+                        {formatPrice(price)} y.e.
                     </p>
                 )}
             </div>
