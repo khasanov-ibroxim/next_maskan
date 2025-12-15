@@ -1,7 +1,7 @@
 // app/[lang]/page.tsx - Debug panel bilan
 import { getProperties } from "@/lib/api";
-import { PropertyCard } from "@/components/PropertyCard";
-import { HeroSection } from "@/components/HeroSection";
+import { PropertyCard } from "../../components/PropertyCard";
+import { HeroSection } from "../../components/HeroSection";
 import { ContactSection } from "@/components/ContactSection";
 import { Filter } from "lucide-react";
 import Link from "next/link";
