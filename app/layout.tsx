@@ -1,6 +1,7 @@
 import { Inter } from "next/font/google";
 import "./globals.css";
 import { Metadata } from "next";
+import Script from "next/script";
 
 const inter = Inter({
     subsets: ["latin", "cyrillic"],
@@ -73,8 +74,8 @@ export const metadata: Metadata = {
         creator: '@maskanlux',
     },
     verification: {
-        google: 'your-google-verification-code', // Add after registering with Google Search Console
-        yandex: 'your-yandex-verification-code', // Add after registering with Yandex Webmaster
+        google: 'w_k9mrs2NS3AeIO0p1czTkyoAmn2DPz_isx1RQajqCY', // Add after registering with Google Search Console
+        yandex: '1d7d7bec5299f783', // Add after registering with Yandex Webmaster
     },
     alternates: {
         canonical: '/',
@@ -115,8 +116,60 @@ export default function RootLayout({
             <link rel="icon" type="image/png" href="/logo.png" sizes="16x16" />
             <link rel="apple-touch-icon" href="/logo.png" />
 
-            {/* ✅ Manifest for PWA */}
+
             <link rel="manifest" href="/manifest.json" />
+            <Script
+                strategy="afterInteractive"
+                src="https://www.googletagmanager.com/gtag/js?id=G-B3NW7JFEDN"
+            />
+            <Script
+                id="google-analytics"
+                strategy="afterInteractive"
+                dangerouslySetInnerHTML={{
+                    __html: `
+                      window.dataLayer = window.dataLayer || [];
+                      function gtag(){dataLayer.push(arguments);}
+                      gtag('js', new Date());
+                      gtag('config', 'G-B3NW7JFEDN', {
+                        page_path: window.location.pathname,
+                      });
+                    `,
+                }}
+            />
+            <Script
+                id="yandex-metrika"
+                strategy="afterInteractive"
+                dangerouslySetInnerHTML={{
+                    __html: `
+                      (function(m,e,t,r,i,k,a){
+                        m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};
+                        m[i].l=1*new Date();
+                        for (var j = 0; j < document.scripts.length; j++) {
+                          if (document.scripts[j].src === r) { return; }
+                        }
+                        k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)
+                      })(window, document, 'script', 'https://mc.yandex.ru/metrika/tag.js', 'ym');
+
+                      ym(105857815, 'init', {
+                        ssr: true,
+                        clickmap: true,
+                        trackLinks: true,
+                        accurateTrackBounce: true,
+                        webvisor: true,
+                        ecommerce: 'dataLayer'
+                      });
+                    `,
+                }}
+            />
+            <noscript>
+                <div>
+                    <img
+                        src="https://mc.yandex.ru/watch/105857815"
+                        style={{ position: 'absolute', left: '-9999px' }}
+                        alt=""
+                    />
+                </div>
+            </noscript>
         </head>
         <body className={`${inter.className} bg-slate-50 min-h-screen antialiased`} suppressHydrationWarning>
         {/* ✅ Skip to main content for accessibility */}
