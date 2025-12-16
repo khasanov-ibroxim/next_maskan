@@ -117,6 +117,9 @@ export default function RootLayout({
             <link rel="apple-touch-icon" href="/logo.png"/>
             <link rel="manifest" href="/manifest.json"/>
             <meta name="google-adsense-account" content="ca-pub-9101620582451955"/>
+            <Script async
+                    src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9101620582451955"
+                    crossOrigin="anonymous"></Script>
             {/* ✅ Google Analytics - WORKING */}
             <Script
                 strategy="afterInteractive"
