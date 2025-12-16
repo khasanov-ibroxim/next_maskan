@@ -107,16 +107,16 @@ export default function RootLayout({
         <html lang="uz" className={inter.variable} suppressHydrationWarning>
         <head>
             {/* ✅ Preconnect to external domains */}
-            <link rel="preconnect" href={process.env.NEXT_PUBLIC_API_URL || 'http://194.163.140.30:5000'} />
-            <link rel="dns-prefetch" href={process.env.NEXT_PUBLIC_API_URL || 'http://194.163.140.30:5000'} />
+            <link rel="preconnect" href={process.env.NEXT_PUBLIC_API_URL || 'http://194.163.140.30:5000'}/>
+            <link rel="dns-prefetch" href={process.env.NEXT_PUBLIC_API_URL || 'http://194.163.140.30:5000'}/>
 
             {/* ✅ Favicon */}
-            <link rel="icon" href="/logo.png" sizes="any" />
-            <link rel="icon" type="image/png" href="/logo.png" sizes="32x32" />
-            <link rel="icon" type="image/png" href="/logo.png" sizes="16x16" />
-            <link rel="apple-touch-icon" href="/logo.png" />
-            <link rel="manifest" href="/manifest.json" />
-
+            <link rel="icon" href="/logo.png" sizes="any"/>
+            <link rel="icon" type="image/png" href="/logo.png" sizes="32x32"/>
+            <link rel="icon" type="image/png" href="/logo.png" sizes="16x16"/>
+            <link rel="apple-touch-icon" href="/logo.png"/>
+            <link rel="manifest" href="/manifest.json"/>
+            <meta name="google-adsense-account" content="ca-pub-9101620582451955"/>
             {/* ✅ Google Analytics - WORKING */}
             <Script
                 strategy="afterInteractive"
