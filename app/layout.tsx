@@ -74,8 +74,8 @@ export const metadata: Metadata = {
         creator: '@maskanlux',
     },
     verification: {
-        google: 'w_k9mrs2NS3AeIO0p1czTkyoAmn2DPz_isx1RQajqCY', // Add after registering with Google Search Console
-        yandex: '1d7d7bec5299f783', // Add after registering with Yandex Webmaster
+        google: 'w_k9mrs2NS3AeIO0p1czTkyoAmn2DPz_isx1RQajqCY',
+        yandex: '1d7d7bec5299f783',
     },
     alternates: {
         canonical: '/',
@@ -115,9 +115,9 @@ export default function RootLayout({
             <link rel="icon" type="image/png" href="/logo.png" sizes="32x32" />
             <link rel="icon" type="image/png" href="/logo.png" sizes="16x16" />
             <link rel="apple-touch-icon" href="/logo.png" />
-
-
             <link rel="manifest" href="/manifest.json" />
+
+            {/* ✅ Google Analytics - WORKING */}
             <Script
                 strategy="afterInteractive"
                 src="https://www.googletagmanager.com/gtag/js?id=G-B3NW7JFEDN"
@@ -136,6 +136,8 @@ export default function RootLayout({
                     `,
                 }}
             />
+
+            {/* ✅ Yandex Metrika - COMPLETE VERSION */}
             <Script
                 id="yandex-metrika"
                 strategy="afterInteractive"
@@ -151,7 +153,6 @@ export default function RootLayout({
                       })(window, document, 'script', 'https://mc.yandex.ru/metrika/tag.js', 'ym');
 
                       ym(105857815, 'init', {
-                        ssr: true,
                         clickmap: true,
                         trackLinks: true,
                         accurateTrackBounce: true,
@@ -161,17 +162,20 @@ export default function RootLayout({
                     `,
                 }}
             />
-            <noscript>
-                <div>
-                    <img
-                        src="https://mc.yandex.ru/watch/105857815"
-                        style={{ position: 'absolute', left: '-9999px' }}
-                        alt=""
-                    />
-                </div>
-            </noscript>
         </head>
         <body className={`${inter.className} bg-slate-50 min-h-screen antialiased`} suppressHydrationWarning>
+
+        {/* ✅ Yandex Metrika noscript - REQUIRED */}
+        <noscript>
+            <div>
+                <img
+                    src="https://mc.yandex.ru/watch/105857815"
+                    style={{ position: 'absolute', left: '-9999px' }}
+                    alt=""
+                />
+            </div>
+        </noscript>
+
         {/* ✅ Skip to main content for accessibility */}
         <a
             href="#main-content"
@@ -196,13 +200,13 @@ export default function RootLayout({
                     logo: 'https://maskanlux.uz/logo.png',
                     contactPoint: {
                         '@type': 'ContactPoint',
-                        telephone: '+998 97 085 06 04', // Replace with actual
+                        telephone: '+998 97 085 06 04',
                         contactType: 'Customer Service',
                         availableLanguage: ['uz', 'ru', 'en'],
                     },
                     sameAs: [
-                        'https://t.me/Khasanov_ibroxim', // Replace with actual
-                        'https://www.instagram.com/_maskan_lux', // Replace with actual
+                        'https://t.me/Khasanov_ibroxim',
+                        'https://www.instagram.com/_maskan_lux',
                     ],
                     address: {
                         '@type': 'PostalAddress',
