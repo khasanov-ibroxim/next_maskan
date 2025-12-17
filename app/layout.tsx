@@ -1,3 +1,4 @@
+// app/layout.tsx - COMPLETE FIXED VERSION
 import { Inter } from "next/font/google";
 import "./globals.css";
 import { Metadata } from "next";
@@ -13,22 +14,21 @@ const inter = Inter({
 export const metadata: Metadata = {
     metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || 'https://maskanlux.uz'),
     title: {
-        default: 'Maskan Lux - Ko\'chmas Mulk Toshkentda',
+        default: 'Maskan Lux - Недвижимость в Ташкенте | Купить квартиру',
         template: '%s | Maskan Lux',
     },
-    description: 'Toshkent shahridagi eng yaxshi ko\'chmas mulk takliflari. Kvartira sotish va ijaraga berish. Qulay narxlar, professional xizmat.',
+    description: 'Лучшие предложения недвижимости в Ташкенте. Купить и арендовать квартиры. Профессиональный сервис, лучшие цены.',
     keywords: [
-        'kvartira',
-        'uy',
-        'ko\'chmas mulk',
-        'Toshkent',
-        'maskan',
-        'sotish',
-        'ijara',
-        'real estate',
-        'Yunusobod',
-        'Arenda',
-        'sotiladi',
+        'недвижимость',
+        'Ташкент',
+        'квартиры',
+        'купить квартиру',
+        'аренда квартир',
+        'продажа квартир',
+        'новостройки',
+        'вторичное жилье',
+        'риэлтор',
+        'агентство недвижимости',
     ],
     authors: [{ name: 'Maskan Lux', url: 'https://maskanlux.uz' }],
     creator: 'Maskan Lux',
@@ -51,11 +51,11 @@ export const metadata: Metadata = {
     },
     openGraph: {
         type: 'website',
-        locale: 'uz_UZ',
-        alternateLocale: ['ru_RU', 'en_US'],
+        locale: 'ru_RU',
+        alternateLocale: ['uz_UZ', 'en_US'],
         url: 'https://maskanlux.uz',
-        title: 'Maskan Lux - Ko\'chmas Mulk Toshkentda',
-        description: 'Toshkent shahridagi eng yaxshi ko\'chmas mulk takliflari',
+        title: 'Maskan Lux - Недвижимость в Ташкенте',
+        description: 'Лучшие предложения недвижимости в Ташкенте. Профессиональный сервис.',
         siteName: 'Maskan Lux',
         images: [
             {
@@ -68,8 +68,8 @@ export const metadata: Metadata = {
     },
     twitter: {
         card: 'summary_large_image',
-        title: 'Maskan Lux - Ko\'chmas Mulk Toshkentda',
-        description: 'Toshkent shahridagi eng yaxshi ko\'chmas mulk takliflari',
+        title: 'Maskan Lux - Недвижимость в Ташкенте',
+        description: 'Лучшие предложения недвижимости в Ташкенте',
         images: ['/bg.png'],
         creator: '@maskanlux',
     },
@@ -80,8 +80,8 @@ export const metadata: Metadata = {
     alternates: {
         canonical: '/',
         languages: {
-            'uz': '/uz',
             'ru': '/ru',
+            'uz': '/uz',
             'en': '/en',
             'uz-Cyrl': '/uz-cy',
         },
@@ -104,10 +104,14 @@ export default function RootLayout({
     children: React.ReactNode;
 }>) {
     return (
-        <html lang="uz" className={inter.variable} suppressHydrationWarning>
+        <html lang="ru" className={inter.variable} suppressHydrationWarning>
         <head>
+            {/* ✅ CRITICAL: Explicit language declaration for Google */}
+            <meta httpEquiv="content-language" content="ru" />
+
             {/* ✅ Preconnect to external domains */}
-            <link rel="preconnect" href={process.env.NEXT_PUBLIC_API_URL || 'http://194.163.140.30:5000'}/>
+            <link rel="preconnect" href="https://pagead2.googlesyndication.com" />
+            <link rel="preconnect" href="https://www.googletagmanager.com" />
             <link rel="dns-prefetch" href={process.env.NEXT_PUBLIC_API_URL || 'http://194.163.140.30:5000'}/>
 
             {/* ✅ Favicon */}
@@ -116,11 +120,17 @@ export default function RootLayout({
             <link rel="icon" type="image/png" href="/logo.png" sizes="16x16"/>
             <link rel="apple-touch-icon" href="/logo.png"/>
             <link rel="manifest" href="/manifest.json"/>
+
+            {/* ✅ Google AdSense - CORRECT PLACEMENT */}
             <meta name="google-adsense-account" content="ca-pub-9101620582451955"/>
-            <Script async
-                    src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9101620582451955"
-                    crossOrigin="anonymous"></Script>
-            {/* ✅ Google Analytics - WORKING */}
+            <Script
+                async
+                src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9101620582451955"
+                crossOrigin="anonymous"
+                strategy="afterInteractive"
+            />
+
+            {/* ✅ Google Analytics */}
             <Script
                 strategy="afterInteractive"
                 src="https://www.googletagmanager.com/gtag/js?id=G-B3NW7JFEDN"
@@ -234,7 +244,7 @@ export default function RootLayout({
                         '@type': 'SearchAction',
                         target: {
                             '@type': 'EntryPoint',
-                            urlTemplate: 'https://maskanlux.uz/uz?location={search_term_string}',
+                            urlTemplate: 'https://maskanlux.uz/ru?location={search_term_string}',
                         },
                         'query-input': 'required name=search_term_string',
                     },

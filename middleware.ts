@@ -1,26 +1,11 @@
-// middleware.ts
+// middleware.ts - FIXED VERSION (Default: Russian)
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 import { i18n } from './i18n-config';
 
 function getLocale(request: NextRequest): string {
-  // Check if locale is in pathname
-  const pathname = request.nextUrl.pathname;
-  const pathnameLocale = i18n.locales.find(
-      (locale) => pathname.startsWith(`/${locale}/`) || pathname === `/${locale}`
-  );
-
-  if (pathnameLocale) return pathnameLocale;
-
-  // Check Accept-Language header
-  const acceptLanguage = request.headers.get('accept-language');
-  if (acceptLanguage) {
-    const browserLang = acceptLanguage.split(',')[0].split('-')[0];
-    const matchedLocale = i18n.locales.find(locale => locale.startsWith(browserLang));
-    if (matchedLocale) return matchedLocale;
-  }
-
-  return i18n.defaultLocale;
+  // ✅ FIXED: Always return Russian as default for Google AdSense
+  return 'ru';
 }
 
 export function middleware(request: NextRequest) {
@@ -49,14 +34,14 @@ export function middleware(request: NextRequest) {
     return NextResponse.next();
   }
 
-  // Redirect root to default locale
+  // ✅ Redirect root to Russian (default)
   if (pathname === '/') {
-    const locale = getLocale(request);
+    const locale = 'ru'; // Force Russian
     return NextResponse.redirect(new URL(`/${locale}`, request.url));
   }
 
-  // For other paths without locale, redirect to default locale
-  const locale = getLocale(request);
+  // ✅ For other paths without locale, redirect to Russian
+  const locale = 'ru'; // Force Russian
   return NextResponse.redirect(new URL(`/${locale}${pathname}`, request.url));
 }
 

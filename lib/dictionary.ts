@@ -14,7 +14,7 @@ export const getDictionary = async (locale: Locale) => {
     // ✅ Validate locale exists
     if (!dictionaries[locale]) {
       console.warn(`Dictionary for locale "${locale}" not found, falling back to "uz"`);
-      return dictionaries.uz();
+      return dictionaries.ru();
     }
 
     return await dictionaries[locale]();
@@ -23,7 +23,7 @@ export const getDictionary = async (locale: Locale) => {
 
     // ✅ Fallback to default locale
     try {
-      return await dictionaries.uz();
+      return await dictionaries.ru();
     } catch (fallbackError) {
       console.error('Failed to load fallback dictionary:', fallbackError);
 
