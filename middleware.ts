@@ -3,11 +3,6 @@ import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 import { i18n } from './i18n-config';
 
-function getLocale(request: NextRequest): string {
-  // ✅ FIXED: Always return Russian as default for Google AdSense
-  return 'ru';
-}
-
 export function middleware(request: NextRequest) {
   const pathname = request.nextUrl.pathname;
 
@@ -34,24 +29,20 @@ export function middleware(request: NextRequest) {
     return NextResponse.next();
   }
 
-  // ✅ Redirect root to Russian (default)
+  // ✅ FIXED: Always redirect to Russian (default)
+  const defaultLocale = 'ru';
+
+  // Redirect root to Russian
   if (pathname === '/') {
-    const locale = 'ru'; // Force Russian
-    return NextResponse.redirect(new URL(`/${locale}`, request.url));
+    return NextResponse.redirect(new URL(`/${defaultLocale}`, request.url));
   }
 
-  // ✅ For other paths without locale, redirect to Russian
-  const locale = 'ru'; // Force Russian
-  return NextResponse.redirect(new URL(`/${locale}${pathname}`, request.url));
+  // For other paths without locale, redirect to Russian
+  return NextResponse.redirect(new URL(`/${defaultLocale}${pathname}`, request.url));
 }
 
 export const config = {
   matcher: [
-    // Match all paths except:
-    // - api routes
-    // - _next/static (static files)
-    // - _next/image (image optimization files)
-    // - favicon.ico, robots.txt, sitemap.xml (public files)
     '/((?!api|_next/static|_next/image|favicon.ico|robots.txt|sitemap.xml|.*\\..*|).*)',
   ],
 };

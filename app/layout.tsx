@@ -1,4 +1,4 @@
-// app/layout.tsx - COMPLETE FIXED VERSION
+// app/layout.tsx - COMPLETE FIXED VERSION (Default: Russian)
 import { Inter } from "next/font/google";
 import "./globals.css";
 import { Metadata } from "next";
@@ -10,7 +10,7 @@ const inter = Inter({
     variable: '--font-inter',
 });
 
-// ✅ Root metadata for SEO
+// ✅ Root metadata for SEO (Russian as default)
 export const metadata: Metadata = {
     metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || 'https://maskanlux.uz'),
     title: {
@@ -51,7 +51,7 @@ export const metadata: Metadata = {
     },
     openGraph: {
         type: 'website',
-        locale: 'ru_RU',
+        locale: 'ru_RU', // ✅ Russian as default
         alternateLocale: ['uz_UZ', 'en_US'],
         url: 'https://maskanlux.uz',
         title: 'Maskan Lux - Недвижимость в Ташкенте',
@@ -78,9 +78,9 @@ export const metadata: Metadata = {
         yandex: '1d7d7bec5299f783',
     },
     alternates: {
-        canonical: '/',
+        canonical: '/ru', // ✅ Russian as canonical
         languages: {
-            'ru': '/ru',
+            'ru': '/ru', // ✅ Russian first
             'uz': '/uz',
             'en': '/en',
             'uz-Cyrl': '/uz-cy',
@@ -121,7 +121,7 @@ export default function RootLayout({
             <link rel="apple-touch-icon" href="/logo.png"/>
             <link rel="manifest" href="/manifest.json"/>
 
-            {/* ✅ Google AdSense - CORRECT PLACEMENT */}
+            {/* ✅ Google AdSense */}
             <meta name="google-adsense-account" content="ca-pub-9101620582451955"/>
             <Script
                 async
@@ -150,7 +150,7 @@ export default function RootLayout({
                 }}
             />
 
-            {/* ✅ Yandex Metrika - COMPLETE VERSION */}
+            {/* ✅ Yandex Metrika */}
             <Script
                 id="yandex-metrika"
                 strategy="afterInteractive"
@@ -178,7 +178,7 @@ export default function RootLayout({
         </head>
         <body className={`${inter.className} bg-slate-50 min-h-screen antialiased`} suppressHydrationWarning>
 
-        {/* ✅ Yandex Metrika noscript - REQUIRED */}
+        {/* ✅ Yandex Metrika noscript */}
         <noscript>
             <div>
                 <img
@@ -215,7 +215,7 @@ export default function RootLayout({
                         '@type': 'ContactPoint',
                         telephone: '+998 97 085 06 04',
                         contactType: 'Customer Service',
-                        availableLanguage: ['uz', 'ru', 'en'],
+                        availableLanguage: ['ru', 'uz', 'en'],
                     },
                     sameAs: [
                         'https://t.me/Khasanov_ibroxim',
@@ -240,6 +240,7 @@ export default function RootLayout({
                     '@type': 'WebSite',
                     name: 'Maskan Lux',
                     url: 'https://maskanlux.uz',
+                    inLanguage: 'ru', // ✅ Russian as default
                     potentialAction: {
                         '@type': 'SearchAction',
                         target: {
