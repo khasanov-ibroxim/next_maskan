@@ -4,7 +4,7 @@
 import { useState } from 'react';
 import { Phone, User, Mail, Send, Share2 } from 'lucide-react';
 import Image from 'next/image';
-import {formatPrice} from "@/lib/api.ts";
+import {formatPrice, GetTelegramConfig} from "@/lib/api.ts";
 
 interface PropertySidebarProps {
     title: string;
@@ -76,6 +76,7 @@ export function PropertySidebar({
         setSubmitStatus('idle');
 
         try {
+            const resConfig = await GetTelegramConfig();
             const response = await fetch('/api/telegram', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -85,6 +86,7 @@ export function PropertySidebar({
                     message: formData.message,
                     property: title,
                     district: district,
+                    config:resConfig,
                 }),
             });
 
@@ -149,11 +151,11 @@ export function PropertySidebar({
                 <div className="space-y-3">
                     {/* Main Phone - Always visible */}
                     <a
-                        href="tel:+998970850604"
+                        href={`tel:${phone}`}
                         className="flex items-center justify-center gap-2 w-full bg-emerald-500 hover:bg-emerald-600 text-white py-3 px-4 rounded-xl font-medium transition-colors shadow-sm"
                     >
                         <Phone size={20} />
-                        <span>+998 97 085 06 04</span>
+                        <span>{phone}</span>
                     </a>
 
                     {/* Share Button */}

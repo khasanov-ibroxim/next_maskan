@@ -5,12 +5,6 @@ import { i18n } from './i18n-config';
 
 export function middleware(request: NextRequest) {
   const pathname = request.nextUrl.pathname;
-
-  // Skip middleware for:
-  // - API routes
-  // - Static files
-  // - Next.js internals
-  // - Public files (robots.txt, sitemap.xml, etc.)
   if (
       pathname.startsWith('/api/') ||
       pathname.startsWith('/_next/') ||

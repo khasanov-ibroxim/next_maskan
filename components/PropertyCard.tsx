@@ -122,7 +122,7 @@ export function PropertyCard({property, lang, dict}) {
                             )}
                             {property.phone && (
                                 <a
-                                    href={`tel:+998970850604`}
+                                    href={`tel:${property.phone}`}
                                     className="flex items-center gap-1 text-emerald-600 hover:text-emerald-700 transition-colors"
                                     onClick={(e) => e.stopPropagation()}
                                 >

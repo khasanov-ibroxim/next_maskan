@@ -2,8 +2,7 @@
 
     export async function POST(req: Request) {
         try {
-            const { name, phone, message } = await req.json();
-
+            const { name, phone, message , config } = await req.json();
             const text = `
     📩 *Yangi murojaat*
     👤 Ism: ${name}
@@ -12,7 +11,7 @@
         `;
 
             const response = await fetch(
-                `https://api.telegram.org/bot${process.env.TELEGRAM_BOT_TOKEN}/sendMessage`,
+                `https://api.telegram.org/bot${config.telegram_bot_token}/sendMessage`,
                 {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },

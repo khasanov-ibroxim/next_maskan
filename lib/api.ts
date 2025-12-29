@@ -5,6 +5,38 @@ import { Property } from '@/types/property';
 const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://194.163.140.30:5000';
 const API_URL = `${API_BASE}/api/public`;
 
+
+
+export async function GetTelegramConfig() {
+  try {
+      const res = await fetch(`${API_URL}/config`, {
+        method: 'GET',
+        cache: 'no-store',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      })
+
+    if (!res.ok) {
+      console.error('  ❌ Response not ok:', res.status);
+      return null;
+    }
+
+    const result = await res.json();
+
+    if (!result.success) {
+      console.error('  ❌ API error:', result.error);
+      return null;
+    }
+
+    return result.data;
+  }catch (error) {
+    console.error(error);
+  }
+}
+
+
+
 /**
  * ✅ Fetch properties with proper error handling
  */
