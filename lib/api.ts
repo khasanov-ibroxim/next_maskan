@@ -1,41 +1,102 @@
-// lib/api.ts - FIXED VERSION
+// lib/api.ts - ✅ MULTILANG SUPPORT
 // @ts-ignore
 import { Property } from '@/types/property';
 
 const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://194.163.140.30:5000';
 const API_URL = `${API_BASE}/api/public`;
 
+/**
+ * ✅ Helper to get text in current language
+ */
+function getLocalizedText(data: any, lang: string): string {
+  if (!data) return '';
 
+  // If data is already a string, return it
+  if (typeof data === 'string') return data;
 
+  // If data is object with translations
+  if (typeof data === 'object') {
+    // Try exact language match
+    if (data[lang]) return data[lang];
+
+    // Fallback chain
+    return data.uz || data.ru || data.en || data.uz_cy || Object.values(data)[0] || '';
+  }
+
+  return String(data);
+}
+
+/**
+ * ✅ Get Telegram config
+ */
 export async function GetTelegramConfig() {
   try {
-      const res = await fetch(`${API_URL}/config`, {
-        method: 'GET',
-        cache: 'no-store',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      })
+    const res = await fetch(`${API_URL}/config`, {
+      method: 'GET',
+      cache: 'no-store',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
 
     if (!res.ok) {
-      console.error('  ❌ Response not ok:', res.status);
+      console.error('❌ Config response not ok:', res.status);
       return null;
     }
 
     const result = await res.json();
 
     if (!result.success) {
-      console.error('  ❌ API error:', result.error);
+      console.error('❌ Config API error:', result.error);
       return null;
     }
 
     return result.data;
-  }catch (error) {
-    console.error(error);
+  } catch (error) {
+    console.error('❌ GetTelegramConfig error:', error);
+    return null;
   }
 }
 
+/**
+ * ✅ Transform API property to frontend property (with lang)
+ */
+function transformProperty(apiProperty: any, lang: string): Property {
+  return {
+    id: apiProperty.id,
 
+    // ✅ Localized text fields
+    title: getLocalizedText(apiProperty.title, lang),
+    description: getLocalizedText(apiProperty.description, lang),
+    district: getLocalizedText(apiProperty.district, lang),
+    type: getLocalizedText(apiProperty.type, lang),
+    buildingType: getLocalizedText(apiProperty.buildingType, lang),
+    renovation: getLocalizedText(apiProperty.renovation, lang),
+    layout: getLocalizedText(apiProperty.layout, lang),
+    balcony: getLocalizedText(apiProperty.balcony, lang),
+    parking: getLocalizedText(apiProperty.parking, lang),
+
+    // Numeric fields
+    price: typeof apiProperty.price === 'number'
+        ? apiProperty.price
+        : parseFloat(apiProperty.price) || 0,
+    rooms: apiProperty.rooms || 0,
+    area: apiProperty.area || 0,
+    floor: apiProperty.floor || 0,
+    totalFloors: apiProperty.totalFloors || 0,
+
+    // Images
+    images: Array.isArray(apiProperty.images) ? apiProperty.images : [],
+    mainImage: apiProperty.mainImage || (apiProperty.images?.[0]) || null,
+
+    // Contact info
+    phone: apiProperty.phone || '',
+    rieltor: apiProperty.rieltor || '',
+
+    // Date
+    createdAt: apiProperty.createdAt || new Date().toISOString(),
+  };
+}
 
 /**
  * ✅ Fetch properties with proper error handling
@@ -49,15 +110,14 @@ export async function getProperties(filters: {
   try {
     console.log('📥 Fetching properties:', filters);
 
-    const params = new URLSearchParams({
-      lang: filters.lang,
-    });
+    const params = new URLSearchParams();
 
+    // Don't send lang to API anymore, we handle it on frontend
     if (filters.rooms) params.append('rooms', filters.rooms);
     if (filters.location) params.append('location', filters.location);
     if (filters.type) params.append('type', filters.type);
 
-    const url = `${API_URL}/properties?${params.toString()}`;
+    const url = `${API_URL}/properties${params.toString() ? `?${params.toString()}` : ''}`;
     console.log('  URL:', url);
 
     const response = await fetch(url, {
@@ -78,22 +138,17 @@ export async function getProperties(filters: {
       throw new Error(result.error || 'Unknown error');
     }
 
-    // ✅ Validate data
-    const properties = (result.data || []).map((prop: any) => ({
-      ...prop,
-      // ✅ Ensure images is array
-      images: Array.isArray(prop.images) ? prop.images : [],
-      // ✅ Ensure mainImage exists
-      mainImage: prop.mainImage || (prop.images && prop.images[0]) || null,
-      // ✅ Ensure price is number
-      price: typeof prop.price === 'number' ? prop.price : parseFloat(prop.price) || 0,
-    }));
+    // ✅ Transform all properties to current language
+    const properties = (result.data || []).map((prop: any) =>
+        transformProperty(prop, filters.lang)
+    );
 
     console.log('  Sample property:', {
       id: properties[0]?.id,
+      title: properties[0]?.title,
+      district: properties[0]?.district,
       price: properties[0]?.price,
       images: properties[0]?.images?.length,
-      mainImage: properties[0]?.mainImage ? '✅' : '❌',
     });
 
     return properties;
@@ -109,9 +164,9 @@ export async function getProperties(filters: {
  */
 export async function getPropertyById(id: string, lang: string): Promise<Property | null> {
   try {
-    console.log(`📥 Fetching property: ${id}`);
+    console.log(`📥 Fetching property: ${id} (lang: ${lang})`);
 
-    const url = `${API_URL}/properties/${id}?lang=${lang}`;
+    const url = `${API_URL}/properties/${id}`;
     console.log('  URL:', url);
 
     const response = await fetch(url, {
@@ -133,24 +188,15 @@ export async function getPropertyById(id: string, lang: string): Promise<Propert
       return null;
     }
 
-    const prop = result.data;
-
-    // ✅ Validate and fix data
-    const property: Property = {
-      ...prop,
-      // ✅ Ensure images is array
-      images: Array.isArray(prop.images) ? prop.images : [],
-      // ✅ Ensure mainImage exists
-      mainImage: prop.mainImage || (prop.images && prop.images[0]) || null,
-      // ✅ Ensure price is number
-      price: typeof prop.price === 'number' ? prop.price : parseFloat(prop.price) || 0,
-    };
+    // ✅ Transform to current language
+    const property = transformProperty(result.data, lang);
 
     console.log('✅ Property loaded:', {
       id: property.id,
+      title: property.title,
+      district: property.district,
       price: property.price,
       images: property.images.length,
-      mainImage: property.mainImage ? '✅' : '❌',
     });
 
     return property;
@@ -162,9 +208,9 @@ export async function getPropertyById(id: string, lang: string): Promise<Propert
 }
 
 /**
- * ✅ Get locations
+ * ✅ Get locations with translations
  */
-export async function getLocations(): Promise<{ name: string; count: number }[]> {
+export async function getLocations(lang: string): Promise<{ name: string; count: number }[]> {
   try {
     const response = await fetch(`${API_URL}/locations`, {
       cache: 'no-store',
@@ -175,7 +221,14 @@ export async function getLocations(): Promise<{ name: string; count: number }[]>
     }
 
     const result = await response.json();
-    return result.success ? result.data : [];
+
+    if (!result.success) return [];
+
+    // ✅ Transform location names to current language
+    return (result.data || []).map((loc: any) => ({
+      name: getLocalizedText(loc.name, lang),
+      count: loc.count,
+    }));
 
   } catch (error) {
     console.error('❌ getLocations error:', error);
