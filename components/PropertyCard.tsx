@@ -8,7 +8,7 @@ import {formatPrice} from "@/lib/api.ts";
 
 
 export function PropertyCard({property, lang, dict}) {
-    console.log(property)
+    console.log("sadasd",property)
     return (
         <article
             className="bg-white rounded-2xl overflow-hidden shadow-sm border border-slate-100 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col h-full"

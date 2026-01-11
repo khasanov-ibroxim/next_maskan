@@ -129,7 +129,7 @@ export default async function PropertyPage({ params }: Props) {
   const { lang, id } = await params;
   const property = await getPropertyById(id, lang);
   const dict = await getDictionary(lang);
-
+  console.log("PAGE",property)
   if (!property) {
     notFound();
   }

@@ -1,4 +1,4 @@
-// lib/api.ts - ✅ MULTILANG SUPPORT
+// lib/api.ts - ✅ FIXED MULTILANG SUPPORT
 // @ts-ignore
 import { Property } from '@/types/property';
 
@@ -6,7 +6,7 @@ const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://194.163.140.30:5000'
 const API_URL = `${API_BASE}/api/public`;
 
 /**
- * ✅ Helper to get text in current language
+ * ✅ FIXED: Helper to get text in current language
  */
 function getLocalizedText(data: any, lang: string): string {
   if (!data) return '';
@@ -16,11 +16,33 @@ function getLocalizedText(data: any, lang: string): string {
 
   // If data is object with translations
   if (typeof data === 'object') {
+    // ✅ CRITICAL FIX: Normalize language code
+    // uz-cy → uz_cy for object keys
+    const normalizedLang = lang.replace('-', '_');
+
+    console.log('🌐 getLocalizedText:', {
+      lang,
+      normalizedLang,
+      keys: Object.keys(data),
+      data
+    });
+
+    // Try normalized language match first
+    if (data[normalizedLang]) {
+      console.log('  ✅ Found:', normalizedLang, '=', data[normalizedLang]);
+      return data[normalizedLang];
+    }
+
     // Try exact language match
-    if (data[lang]) return data[lang];
+    if (data[lang]) {
+      console.log('  ✅ Found:', lang, '=', data[lang]);
+      return data[lang];
+    }
 
     // Fallback chain
-    return data.uz || data.ru || data.en || data.uz_cy || Object.values(data)[0] || '';
+    const fallback = data.uz || data.ru || data.en || data.uz_cy || Object.values(data)[0] || '';
+    console.log('  ⚠️ Fallback:', fallback);
+    return fallback;
   }
 
   return String(data);
@@ -62,6 +84,13 @@ export async function GetTelegramConfig() {
  * ✅ Transform API property to frontend property (with lang)
  */
 function transformProperty(apiProperty: any, lang: string): Property {
+  console.log('\n📦 transformProperty:', {
+    id: apiProperty.id,
+    lang,
+    title: apiProperty.title,
+    district: apiProperty.district,
+  });
+
   return {
     id: apiProperty.id,
 
@@ -108,7 +137,7 @@ export async function getProperties(filters: {
   type?: 'Sotuv' | 'Arenda';
 }): Promise<Property[]> {
   try {
-    console.log('📥 Fetching properties:', filters);
+    console.log('\n📥 getProperties:', filters);
 
     const params = new URLSearchParams();
 
@@ -118,7 +147,7 @@ export async function getProperties(filters: {
     if (filters.type) params.append('type', filters.type);
 
     const url = `${API_URL}/properties${params.toString() ? `?${params.toString()}` : ''}`;
-    console.log('  URL:', url);
+    console.log('  🌐 URL:', url);
 
     const response = await fetch(url, {
       cache: 'no-store',
@@ -132,10 +161,20 @@ export async function getProperties(filters: {
     }
 
     const result = await response.json();
-    console.log('✅ Received:', result.count, 'properties');
+    console.log('  ✅ Received:', result.count, 'properties');
 
     if (!result.success) {
       throw new Error(result.error || 'Unknown error');
+    }
+
+    // ✅ Log first property before transform
+    if (result.data && result.data.length > 0) {
+      console.log('  📊 Sample API response:', {
+        id: result.data[0].id,
+        title: result.data[0].title,
+        district: result.data[0].district,
+        type: result.data[0].type,
+      });
     }
 
     // ✅ Transform all properties to current language
@@ -143,13 +182,16 @@ export async function getProperties(filters: {
         transformProperty(prop, filters.lang)
     );
 
-    console.log('  Sample property:', {
-      id: properties[0]?.id,
-      title: properties[0]?.title,
-      district: properties[0]?.district,
-      price: properties[0]?.price,
-      images: properties[0]?.images?.length,
-    });
+    // ✅ Log first property after transform
+    if (properties.length > 0) {
+      console.log('  ✅ Sample transformed property:', {
+        id: properties[0].id,
+        title: properties[0].title,
+        district: properties[0].district,
+        type: properties[0].type,
+        price: properties[0].price,
+      });
+    }
 
     return properties;
 
@@ -164,10 +206,10 @@ export async function getProperties(filters: {
  */
 export async function getPropertyById(id: string, lang: string): Promise<Property | null> {
   try {
-    console.log(`📥 Fetching property: ${id} (lang: ${lang})`);
+    console.log(`\n📥 getPropertyById: ${id} (lang: ${lang})`);
 
     const url = `${API_URL}/properties/${id}`;
-    console.log('  URL:', url);
+    console.log('  🌐 URL:', url);
 
     const response = await fetch(url, {
       cache: 'no-store',
@@ -188,15 +230,21 @@ export async function getPropertyById(id: string, lang: string): Promise<Propert
       return null;
     }
 
+    // ✅ Log API response
+    console.log('  📊 API response:', {
+      id: result.data.id,
+      title: result.data.title,
+      district: result.data.district,
+    });
+
     // ✅ Transform to current language
     const property = transformProperty(result.data, lang);
 
-    console.log('✅ Property loaded:', {
+    console.log('  ✅ Transformed property:', {
       id: property.id,
       title: property.title,
       district: property.district,
       price: property.price,
-      images: property.images.length,
     });
 
     return property;
@@ -212,6 +260,8 @@ export async function getPropertyById(id: string, lang: string): Promise<Propert
  */
 export async function getLocations(lang: string): Promise<{ name: string; count: number }[]> {
   try {
+    console.log('\n📥 getLocations:', lang);
+
     const response = await fetch(`${API_URL}/locations`, {
       cache: 'no-store',
     });
@@ -224,11 +274,26 @@ export async function getLocations(lang: string): Promise<{ name: string; count:
 
     if (!result.success) return [];
 
+    // ✅ Log first location before transform
+    if (result.data && result.data.length > 0) {
+      console.log('  📊 Sample location API response:', result.data[0]);
+    }
+
     // ✅ Transform location names to current language
-    return (result.data || []).map((loc: any) => ({
-      name: getLocalizedText(loc.name, lang),
-      count: loc.count,
-    }));
+    const locations = (result.data || []).map((loc: any) => {
+      const name = getLocalizedText(loc.name, lang);
+      console.log('  🌐 Location:', {
+        original: loc.name,
+        transformed: name,
+        count: loc.count
+      });
+      return {
+        name,
+        count: loc.count,
+      };
+    });
+
+    return locations;
 
   } catch (error) {
     console.error('❌ getLocations error:', error);
