@@ -6,8 +6,7 @@ export const DISTRICTS = [
   "Bodomzor"
 ];
 
-// Simplified mock data with multi-language support structures
-// In a real app, this would come from a database with localized fields
+
 export const RAW_PROPERTIES = [
   {
     id: '1',
