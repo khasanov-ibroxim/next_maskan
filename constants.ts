@@ -202,10 +202,15 @@ export const MOCK_PROPERTIES: Property[] = RAW_PROPERTIES.map(p => ({
   ...p,
   title: p.translations.uz.title,
   description: p.translations.uz.description,
-  renovation: p.renovation as any, // casting for simplicity
-  type: p.type as Property['type'],
-  buildingType: p.buildingType as Property['buildingType']
+  renovation: p.renovation,
+  type: p.type,
+  buildingType: p.buildingType,
+  mainImage: p.images[0] || null,
+  phone: '+998 97 085 06 04',
+  rieltor: 'Maskan Lux',
+  layout: undefined,
+  balcony: undefined,
+  parking: undefined
 }));
-
 export const CONTACT_PHONE = "+998 97 085 06 04";
 export const APP_NAME = "Maskan Lux";
