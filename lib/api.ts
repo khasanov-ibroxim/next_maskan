@@ -20,28 +20,22 @@ function getLocalizedText(data: any, lang: string): string {
     // uz-cy → uz_cy for object keys
     const normalizedLang = lang.replace('-', '_');
 
-    console.log('🌐 getLocalizedText:', {
-      lang,
-      normalizedLang,
-      keys: Object.keys(data),
-      data
-    });
 
     // Try normalized language match first
     if (data[normalizedLang]) {
-      console.log('  ✅ Found:', normalizedLang, '=', data[normalizedLang]);
+
       return data[normalizedLang];
     }
 
     // Try exact language match
     if (data[lang]) {
-      console.log('  ✅ Found:', lang, '=', data[lang]);
+
       return data[lang];
     }
 
     // Fallback chain
     const fallback = data.uz || data.ru || data.en || data.uz_cy || Object.values(data)[0] || '';
-    console.log('  ⚠️ Fallback:', fallback);
+
     return fallback;
   }
 
@@ -84,12 +78,7 @@ export async function GetTelegramConfig() {
  * ✅ Transform API property to frontend property (with lang)
  */
 function transformProperty(apiProperty: any, lang: string): Property {
-  console.log('\n📦 transformProperty:', {
-    id: apiProperty.id,
-    lang,
-    title: apiProperty.title,
-    district: apiProperty.district,
-  });
+
 
   return {
     id: apiProperty.id,
@@ -137,7 +126,7 @@ export async function getProperties(filters: {
   type?: 'Sotuv' | 'Arenda';
 }): Promise<Property[]> {
   try {
-    console.log('\n📥 getProperties:', filters);
+
 
     const params = new URLSearchParams();
 
@@ -147,7 +136,6 @@ export async function getProperties(filters: {
     if (filters.type) params.append('type', filters.type);
 
     const url = `${API_URL}/properties${params.toString() ? `?${params.toString()}` : ''}`;
-    console.log('  🌐 URL:', url);
 
     const response = await fetch(url, {
       cache: 'no-store',
@@ -161,13 +149,13 @@ export async function getProperties(filters: {
     }
 
     const result = await response.json();
-    console.log('  ✅ Received:', result.count, 'properties');
+
 
     if (!result.success) {
       throw new Error(result.error || 'Unknown error');
     }
 
-    // ✅ Log first property before transform
+
     if (result.data && result.data.length > 0) {
       console.log('  📊 Sample API response:', {
         id: result.data[0].id,
@@ -206,10 +194,9 @@ export async function getProperties(filters: {
  */
 export async function getPropertyById(id: string, lang: string): Promise<Property | null> {
   try {
-    console.log(`\n📥 getPropertyById: ${id} (lang: ${lang})`);
+
 
     const url = `${API_URL}/properties/${id}`;
-    console.log('  🌐 URL:', url);
 
     const response = await fetch(url, {
       cache: 'no-store',
@@ -230,22 +217,9 @@ export async function getPropertyById(id: string, lang: string): Promise<Propert
       return null;
     }
 
-    // ✅ Log API response
-    console.log('  📊 API response:', {
-      id: result.data.id,
-      title: result.data.title,
-      district: result.data.district,
-    });
 
     // ✅ Transform to current language
     const property = transformProperty(result.data, lang);
-
-    console.log('  ✅ Transformed property:', {
-      id: property.id,
-      title: property.title,
-      district: property.district,
-      price: property.price,
-    });
 
     return property;
 
@@ -260,7 +234,7 @@ export async function getPropertyById(id: string, lang: string): Promise<Propert
  */
 export async function getLocations(lang: string): Promise<{ name: string; count: number }[]> {
   try {
-    console.log('\n📥 getLocations:', lang);
+
 
     const response = await fetch(`${API_URL}/locations`, {
       cache: 'no-store',

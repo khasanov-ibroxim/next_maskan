@@ -15,7 +15,6 @@ export function PropertyCard({property, lang, dict}) {
             itemScope
             itemType="https://schema.org/RealEstateListing"
         >
-            {/* Image Section */}
             <Link href={`/${lang}/object/${property.id}`} className="relative h-64 overflow-hidden group">
                 <Image
                     src={property.mainImage || '/placeholder.jpg'}
